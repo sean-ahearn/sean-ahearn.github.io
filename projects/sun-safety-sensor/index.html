@@ -1,0 +1,3966 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <!-- Mobile scaling fix -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Sun Safety Sensor | Sean A'Hearn</title>
+
+  <!-- ==== META USED BY INDEX PAGE ==== -->
+  <meta name="project-title" content="Sun Safety Sensor">
+  <meta name="project-year" content="Jul 2023 - Oct 2023">
+  <meta name="project-image" content="/assets/projects/sun-safety-sensor-1.jpeg">
+
+  <style>
+    :root {
+      /* =======================
+            DARK MODE
+      ======================= */
+      --bg: #13213d;
+      --bg-soft: #172a4a;
+      --card: #223456;
+
+      --text: #eef6ff;
+      --muted: #cbd8ee;
+
+      --accent: #22c55e;
+      --accent-alt: #38bdf8;
+
+      --accent-soft: rgba(56, 189, 248, 0.22);
+
+      --border: rgba(186, 204, 228, 0.55);
+      --radius: 18px;
+
+      /* same width as index */
+      --maxw: 1050px;
+      --shadow: 0 14px 34px rgba(2, 6, 23, 0.35);
+
+      /* align footer with same inner edges as index */
+      --panel-inner-x: 18px;
+
+      /* Header height (JS updates this) */
+      --header-h: 64px;
+
+      /* Global backdrop (DARK) */
+      --page-backdrop:
+        radial-gradient(1100px 780px at 70% -10%, rgba(56, 189, 248, 0.22) 0%, transparent 58%),
+        radial-gradient(950px 760px at 110% 15%, rgba(34, 197, 94, 0.13) 0%, transparent 55%),
+        radial-gradient(900px 700px at -10% -20%, rgba(168, 85, 247, 0.12) 0%, transparent 55%),
+        var(--bg);
+
+      /* Header surface */
+      --header-bg: linear-gradient(to bottom, rgba(19, 33, 61, 0.97), rgba(19, 33, 61, 0.90));
+      --header-border: rgba(186, 204, 228, 0.45);
+
+      /* Light-mode “standout” system (overridden in body.light-mode) */
+      --surface: rgba(20, 32, 56, 0.92);
+      --surface-2: rgba(22, 34, 58, 0.60);
+      --surface-3: rgba(255, 255, 255, 0.05);
+      --surface-border: rgba(186, 204, 228, 0.55);
+
+      /* Viewer (X-style) surfaces that match your theme */
+      --viewer-backdrop: rgba(3, 9, 24, 0.72);
+      --viewer-panel: rgba(20, 32, 56, 0.82);
+      --viewer-panel-2: rgba(22, 34, 58, 0.68);
+      --viewer-divider: rgba(186, 204, 228, 0.16);
+
+      /* Caption bar base height */
+      --viewer-caption-h: 66px;
+
+      /* “zoomed view” frame sizing */
+      --viewer-frame-maxw: 1130px;
+      --viewer-frame-pad: 14px;
+
+      /* media viewport surface */
+      --media-surface: rgba(2, 6, 23, 0.92);
+
+      /* viewer media area is 16:9 (desktop) */
+      --viewer-aspect: 16 / 9;
+
+      /* mobile fixed caption row heights */
+      --mobile-cap-collapsed: 132px;
+      --mobile-cap-expanded: 315px;
+
+      /* ==========================================================
+         shared pill styling for caption title + count bubble
+         (keeps count matching title in dark/light mode automatically)
+      ========================================================== */
+      --cap-pill-bg: rgba(15, 23, 42, 0.45);
+      --cap-pill-fg: rgba(255, 255, 255, 0.96);
+      --cap-pill-border: rgba(255, 255, 255, 0.18);
+      --cap-pill-shadow: 0 10px 20px rgba(0, 0, 0, 0.22);
+    }
+
+    body.light-mode {
+      /* =======================
+         LIGHT MODE
+      ======================= */
+      --bg: #f3f4f6;
+      --bg-soft: #ffffff;
+      --card: #ffffff;
+
+      --text: #020617;
+      --muted: #334155;
+
+      --accent: #16a34a;
+      --accent-alt: #0ea5e9;
+
+      --accent-soft: rgba(14, 165, 233, 0.12);
+
+      --border: rgba(148, 163, 184, 0.70);
+      --shadow: 0 18px 46px rgba(15, 23, 42, 0.12);
+
+      --page-backdrop:
+        radial-gradient(1200px 800px at 80% -10%, rgba(56, 189, 248, 0.12) 0%, transparent 55%),
+        radial-gradient(900px 700px at -10% -20%, rgba(168, 85, 247, 0.10) 0%, transparent 55%),
+        #f9fafb;
+
+      --header-bg: linear-gradient(to bottom, rgba(248, 250, 252, 0.96), rgba(241, 245, 249, 0.92));
+      --header-border: rgba(148, 163, 184, 0.70);
+
+      --surface: #ffffff;
+      --surface-2: #f3f6fb;
+      --surface-3: #eef2f7;
+      --surface-border: rgba(148, 163, 184, 0.70);
+
+      --light-card-tint:
+        radial-gradient(circle at top left, rgba(56, 189, 248, 0.18), transparent 55%),
+        radial-gradient(circle at bottom right, rgba(34, 197, 94, 0.10), transparent 55%);
+
+      /* Viewer (light) */
+      --viewer-backdrop: rgba(2, 6, 23, 0.62);
+      --viewer-panel: rgba(255, 255, 255, 0.90);
+      --viewer-panel-2: rgba(243, 246, 251, 0.88);
+      --viewer-divider: rgba(15, 23, 42, 0.12);
+
+      /* Caption bar base height */
+      --viewer-caption-h: 66px;
+
+      --viewer-frame-maxw: 1130px;
+      --viewer-frame-pad: 14px;
+
+      --media-surface: rgba(15, 23, 42, 0.06);
+      --viewer-aspect: 16 / 9;
+
+      /* shared pill styling for caption title + count bubble (light) */
+      --cap-pill-bg: rgba(255, 255, 255, 0.70);
+      --cap-pill-fg: rgba(15, 23, 42, 0.80);
+      --cap-pill-border: rgba(15, 23, 42, 0.12);
+      --cap-pill-shadow: 0 8px 16px rgba(15, 23, 42, 0.10);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      transition: color 0.25s ease;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background: var(--page-backdrop);
+      pointer-events: none;
+      transform: translateZ(0);
+    }
+
+    body.no-scroll {
+      overflow: hidden;
+    }
+
+    body.embedded {
+      background: transparent !important;
+    }
+
+    body.embedded::before {
+      display: none !important;
+    }
+
+    body.embedded header,
+    body.embedded footer {
+      display: none;
+    }
+
+    body.embedded main.page {
+      padding-top: 0 !important;
+    }
+
+    body.embedded .container {
+      max-width: 100%;
+      padding: 8px 10px 10px;
+    }
+
+    body.embedded .project-card {
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      padding: 0;
+    }
+
+    a {
+      color: var(--accent-alt);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    main.page {
+      flex: 1 0 auto;
+      display: flex;
+      flex-direction: column;
+      padding-top: var(--header-h);
+    }
+
+    .container {
+      width: 100%;
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 20px 20px 40px;
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 999;
+      background: var(--header-bg);
+      -webkit-backdrop-filter: blur(14px);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--header-border);
+      transition: background 0.25s ease, border-color 0.25s ease;
+    }
+
+    .nav-container {
+      width: 100%;
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 64px;
+      gap: 16px;
+      padding: 0;
+    }
+
+    .brand {
+      font-weight: 800;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .nav-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 0 0, rgba(56, 189, 248, 0.28), rgba(19, 33, 61, 0.88));
+      color: var(--text);
+      font-size: 1.0rem;
+      font-weight: 700;
+      border: 1px solid rgba(56, 189, 248, 0.55);
+      box-shadow: 0 10px 24px rgba(2, 6, 23, 0.18);
+      transition: background 0.2s ease, border-color 0.2s ease, transform .12s ease;
+      text-decoration: none;
+    }
+
+    .pill:hover {
+      transform: translateY(-1px);
+      border-color: rgba(56, 189, 248, 0.9);
+    }
+
+    body.light-mode .pill {
+      background: radial-gradient(circle at 0 0, rgba(56, 189, 248, 0.15), #ffffff);
+      border-color: rgba(148, 163, 184, 0.75);
+      box-shadow: none;
+      color: #0f172a;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 12px 16px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--accent-alt), var(--accent));
+      color: #020617;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      transition: transform .12s ease, filter .12s ease, box-shadow .12s ease;
+      box-shadow: 0 12px 30px rgba(34, 197, 94, 0.35);
+      text-decoration: none;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.07);
+      box-shadow: 0 16px 40px rgba(56, 189, 248, 0.35);
+    }
+
+    .btn.secondary {
+      background: rgba(19, 33, 61, 0.86);
+      color: var(--text);
+      border: 1px solid var(--border);
+      box-shadow: none;
+      text-decoration: none;
+    }
+
+    body.light-mode .btn.secondary {
+      background: #ffffff;
+      border-color: rgba(148, 163, 184, 0.75);
+      box-shadow: none;
+      color: #0f172a;
+    }
+
+    .btn.secondary:hover {
+      background: rgba(26, 48, 88, 0.88);
+      border-color: rgba(56, 189, 248, 0.85);
+    }
+
+    body.light-mode .btn.secondary:hover {
+      background: #e5f0ff;
+      border-color: rgba(59, 130, 246, 0.7);
+    }
+
+    .btn-compact {
+      padding: 6px 10px;
+      font-size: 0.9rem;
+      box-shadow: none;
+      border-radius: 999px;
+    }
+
+    .icon-ln {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: #0a66c2;
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 1.0rem;
+      letter-spacing: 0.5px;
+      text-transform: lowercase;
+    }
+
+    .icon-mail {
+      width: 28px;
+      height: 28px;
+      display: inline-block;
+      flex: 0 0 auto;
+      color: currentColor;
+    }
+
+    .icon-mail svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      border: 0;
+    }
+
+    .back-main-btn {
+      text-decoration: none;
+    }
+
+    .project-card {
+      background:
+        radial-gradient(circle at top left, rgba(56, 189, 248, 0.24), transparent 56%),
+        radial-gradient(circle at bottom right, rgba(34, 197, 94, 0.14), transparent 58%),
+        var(--surface);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      border: 1.5px solid rgba(56, 189, 248, 0.75);
+
+      padding: 20px 18px 22px;
+      transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .project-card:hover {
+
+      border-color: rgba(56, 189, 248, 0.90);
+      transform: none;
+    }
+
+    body.light-mode .project-card {
+      background: var(--light-card-tint), var(--surface);
+      border: 1.5px solid rgba(59, 130, 246, 0.75);
+      box-shadow: 0 18px 46px rgba(15, 23, 42, 0.12);
+    }
+
+    body.light-mode .project-card:hover {
+      border-color: rgba(59, 130, 246, 0.90);
+      transform: none;
+    }
+
+    h1 {
+      margin-top: 0;
+      margin-bottom: 6px;
+      font-size: clamp(2.05rem, 5.2vw, 2.55rem);
+      letter-spacing: 0.2px;
+      text-shadow: 0 0 26px rgba(56, 189, 248, 0.28), 0 0 18px rgba(34, 197, 94, 0.12);
+    }
+
+    body.light-mode h1 {
+      text-shadow: none;
+    }
+
+    .project-meta {
+      font-size: 0.95rem;
+      margin-bottom: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: flex-start;
+      width: 100%;
+    }
+
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: flex-start;
+      width: 100%;
+    }
+
+    .meta-row.stack {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .tag {
+      font-size: 0.84rem;
+      padding: 5px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(186, 204, 228, 0.55);
+      color: var(--muted);
+      background: rgba(18, 31, 56, 0.78);
+      transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+    }
+
+    body.light-mode .tag {
+      background: #ffffff;
+      border-color: rgba(148, 163, 184, 0.70);
+      color: #0f172a;
+      box-shadow: 0 1px 0 rgba(2, 6, 23, 0.04);
+    }
+
+    .tag-skill {
+      border-color: rgba(34, 197, 94, 0.7);
+      background: rgba(34, 197, 94, 0.14);
+      color: #bbf7d0;
+    }
+
+    body.light-mode .tag-skill {
+      background: #ecfdf3;
+      border-color: rgba(34, 197, 94, 0.60);
+      color: #166534;
+    }
+
+    .tag-software {
+      border-color: rgba(56, 189, 248, 0.78);
+      background: rgba(56, 189, 248, 0.16);
+      color: #bae6fd;
+    }
+
+    body.light-mode .tag-software {
+      background: #eff6ff;
+      border-color: rgba(59, 130, 246, 0.55);
+      color: #1e3a8a;
+    }
+
+    .meta-group {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 10px;
+      border-radius: 14px;
+      border: 1px solid rgba(186, 204, 228, 0.45);
+      background: var(--surface-2);
+      max-width: 100%;
+      width: fit-content;
+    }
+
+    body.light-mode .meta-group {
+      background: var(--surface-2);
+      border-color: rgba(148, 163, 184, 0.70);
+    }
+
+    .meta-row.stack .meta-group {
+      width: 100%;
+    }
+
+    .meta-group-title {
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.35px;
+      text-transform: uppercase;
+      width: 100%;
+      color: var(--text);
+      line-height: 1.1;
+      margin: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    body.light-mode .meta-group-title {
+      color: #0f172a;
+    }
+
+    .meta-group-title.skills {
+      color: #bbf7d0;
+    }
+
+    body.light-mode .meta-group-title.skills {
+      color: #166534;
+    }
+
+    .meta-group-title.software {
+      color: #bae6fd;
+    }
+
+    body.light-mode .meta-group-title.software {
+      color: #1e3a8a;
+    }
+
+    .count-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 22px;
+      height: 20px;
+      padding: 0 6px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.2px;
+      line-height: 1;
+      transform: translateY(-0.5px);
+
+      border: 1px solid rgba(186, 204, 228, 0.55);
+      background: rgba(186, 204, 228, 0.14);
+      color: var(--text);
+    }
+
+    body.light-mode .count-badge {
+      border-color: rgba(148, 163, 184, 0.80);
+      background: rgba(148, 163, 184, 0.18);
+      color: #0f172a;
+    }
+
+    .meta-group[aria-label="Skills used"] .count-badge {
+      border-color: rgba(34, 197, 94, 0.70);
+      background: rgba(34, 197, 94, 0.14);
+      color: #bbf7d0;
+    }
+
+    body.light-mode .meta-group[aria-label="Skills used"] .count-badge {
+      background: #ecfdf3;
+      border-color: rgba(34, 197, 94, 0.60);
+      color: #166534;
+    }
+
+    .meta-group[aria-label="Software used"] .count-badge {
+      border-color: rgba(56, 189, 248, 0.78);
+      background: rgba(56, 189, 248, 0.16);
+      color: #bae6fd;
+    }
+
+    body.light-mode .meta-group[aria-label="Software used"] .count-badge {
+      background: #eff6ff;
+      border-color: rgba(59, 130, 246, 0.55);
+      color: #1e3a8a;
+    }
+
+    .meta-bubbles {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .project-description {
+      font-size: 1.0rem;
+      font-weight: 400;
+      color: var(--muted);
+      text-align: justify;
+      text-justify: inter-word;
+    }
+
+    .project-description p {
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+
+    /* ==========================
+       Twitter/X collage block
+    ========================== */
+    .media-block {
+      margin-top: 20px;
+      border-top: 1px solid rgba(186, 204, 228, 0.35);
+      padding-top: 16px;
+      position: relative;
+    }
+
+    body.light-mode .media-block {
+      border-top-color: rgba(148, 163, 184, 0.55);
+    }
+
+    .media-grid {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      display: grid;
+      gap: 4px;
+      background: var(--bg);
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: none;
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      position: relative;
+      transform: translateZ(0);
+      -webkit-transform: translateZ(0);
+      clip-path: inset(0 round var(--radius));
+    }
+
+    .media-grid[data-count="1"] {
+      grid-template-columns: 1fr;
+      grid-template-rows: 1fr;
+    }
+
+    .media-grid[data-count="2"] {
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr;
+    }
+
+    .media-grid[data-count="3"] {
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+    }
+
+    .media-grid[data-count="4"] {
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+    }
+
+    .media-grid[data-count="3"] .tile:nth-child(1) {
+      grid-row: 1 / span 2;
+      grid-column: 1 / 2;
+    }
+
+    .tile {
+      position: relative;
+      overflow: hidden;
+      background: #020617;
+      transform: translateZ(0);
+    }
+
+    body.light-mode .tile {
+      background: #e9edf3;
+    }
+
+    .tile img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      pointer-events: none;
+      transform: translateZ(0);
+    }
+
+    /* Centered play badge + themed styling */
+    .play-badge {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      bottom: auto;
+
+      transform: translate(-50%, -50%);
+      width: 46px;
+      height: 46px;
+      border-radius: 999px;
+
+      border: 1px solid rgba(56, 189, 248, 0.65);
+      background:
+        radial-gradient(circle at 30% 25%, rgba(56, 189, 248, 0.35), rgba(34, 197, 94, 0.18) 55%, rgba(2, 6, 23, 0.60) 100%);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      pointer-events: none;
+
+      color: #13213d;
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.40);
+    }
+
+    .play-badge svg {
+      width: 34px;
+      height: 34px;
+      display: block;
+      fill: currentColor;
+      filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.25));
+    }
+
+    .more-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(2, 6, 23, 0.55);
+      color: #fff;
+      font-weight: 950;
+      font-size: clamp(1.25rem, 4vw, 2.2rem);
+      letter-spacing: 0.2px;
+      pointer-events: none;
+    }
+
+    @media (hover:hover) {
+      .tile::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.0);
+        transition: background .15s ease;
+        pointer-events: none;
+      }
+
+      .media-grid:hover .tile::after {
+        background: rgba(0, 0, 0, 0.10);
+      }
+    }
+
+    footer {
+      margin-top: 14px;
+      padding: 10px 20px 20px;
+      color: var(--muted);
+      border-top: 1px solid rgba(56, 189, 248, 0.45);
+      background: transparent;
+      font-size: 0.85rem;
+      transition: border-color 0.25s ease, color 0.25s ease;
+    }
+
+    body.light-mode footer {
+      border-top: 1px solid rgba(148, 163, 184, 0.7);
+      background: transparent;
+    }
+
+    .footer-inner {
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding-left: var(--panel-inner-x);
+      padding-right: var(--panel-inner-x);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      text-align: left;
+    }
+
+    .theme-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.1s ease, color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .theme-toggle:hover {
+      background: rgba(255, 255, 255, 0.06);
+      transform: translateY(-1px);
+      color: var(--text);
+      border-color: rgba(56, 189, 248, 0.85);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.22);
+    }
+
+    body.light-mode .theme-toggle:hover {
+      background: #e5f0ff;
+      border-color: rgba(59, 130, 246, 0.70);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
+      color: #0f172a;
+    }
+
+    .theme-toggle:focus {
+      outline: none;
+    }
+
+    .theme-toggle:focus-visible {
+      outline: 3px solid rgba(56, 189, 248, 0.45);
+      outline-offset: 2px;
+      border-color: rgba(56, 189, 248, 0.85);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.22);
+    }
+
+    body.light-mode .theme-toggle:focus-visible {
+      outline: 3px solid rgba(59, 130, 246, 0.35);
+      border-color: rgba(59, 130, 246, 0.70);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
+    }
+
+    .theme-toggle-icon {
+      font-size: 1.1rem;
+      line-height: 1;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 14px 14px 28px;
+      }
+
+      .nav-container {
+        padding-inline: 14px;
+      }
+
+      nav {
+        height: auto;
+        padding: 10px 0;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .nav-left {
+        width: 100%;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .brand {
+        font-size: 1.05rem;
+        white-space: nowrap;
+      }
+
+      .nav-actions {
+        justify-content: flex-end;
+        gap: 8px;
+      }
+
+      .back-main-btn {
+        width: 100%;
+      }
+
+      .back-main-btn button {
+        width: 100%;
+        justify-content: center;
+      }
+
+      h1 {
+        font-size: clamp(2.05rem, 7.2vw, 2.55rem);
+      }
+
+      .project-description {
+        font-size: 1.02rem;
+      }
+
+      .tag {
+        font-size: 0.88rem;
+        padding: 6px 10px;
+      }
+
+      .pill {
+        font-size: 0.95rem;
+        padding: 7px 12px;
+      }
+
+      .btn-compact {
+        font-size: 0.95rem;
+        padding: 8px 12px;
+      }
+
+      .project-card {
+        padding: 18px 16px 18px;
+        border-radius: 18px;
+      }
+
+      .footer-inner {
+        justify-content: center;
+        text-align: center;
+      }
+    }
+
+    /* ==========================
+          Fullscreen Viewer
+    ========================== */
+    .viewer-overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      background: var(--viewer-backdrop);
+      z-index: 9999;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+
+      /* handle own gestures */
+      touch-action: none;
+
+      /* helps avoid iOS rubber-band effects */
+      overscroll-behavior: contain;
+    }
+
+    .viewer-overlay.active {
+      display: block;
+    }
+
+    .viewer-stage {
+      position: absolute;
+      inset: 0;
+      height: 100dvh;
+      width: 100vw;
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+      will-change: transform;
+      transition: transform .22s ease;
+    }
+
+    .viewer-stage.dragging-down {
+      transition: none;
+    }
+
+    .viewer-layout {
+      position: relative;
+      flex: 1;
+      min-height: 0;
+      width: 100%;
+    }
+
+    .viewer-captionbar {
+      /* Mobile default: NO full border (keeps edge-to-edge sheet clean) */
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 55;
+      pointer-events: auto;
+
+      min-height: calc(var(--viewer-caption-h) * 1.5);
+      height: auto;
+
+      max-height: min(44dvh, calc(100dvh - 120px));
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
+
+      padding:
+        12px max(12px, env(safe-area-inset-right)) calc(12px + env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+
+      display: flex;
+      align-items: flex-start;
+
+      background:
+        linear-gradient(90deg,
+          rgba(56, 189, 248, 0.22),
+          rgba(34, 197, 94, 0.18),
+          rgba(168, 85, 247, 0.14)),
+        rgba(2, 6, 23, 0.54);
+
+      /* keep separator line on mobile */
+      border-top: 1px solid rgba(255, 255, 255, 0.18);
+
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+
+      box-shadow: 0 -18px 44px rgba(0, 0, 0, 0.35);
+      transition: opacity .18s ease, transform .18s ease;
+
+      box-sizing: border-box;
+      /* avoids any size shifts when desktop border is added */
+    }
+
+    body.light-mode .viewer-captionbar {
+      background:
+        linear-gradient(90deg,
+          rgba(56, 189, 248, 0.20),
+          rgba(34, 197, 94, 0.14),
+          rgba(168, 85, 247, 0.12)),
+        rgba(255, 255, 255, 0.78);
+
+      /* keep separator line on mobile (light) */
+      border-top: 1px solid rgba(15, 23, 42, 0.10);
+
+      box-shadow: 0 -14px 34px rgba(15, 23, 42, 0.10);
+    }
+
+    /* ==========================================================
+     DESKTOP ONLY: center + add the 2px (or 3px) outline
+     (mobile unchanged because this only applies to fine pointers)
+========================================================== */
+    @media (hover:hover) and (pointer:fine) and (min-width: 901px) {
+      .viewer-captionbar {
+        width: 40vw;
+        max-width: 520px;
+        left: 0;
+        right: 0;
+        margin-left: auto;
+        margin-right: auto;
+        bottom: 18px;
+
+        border-radius: 18px;
+
+        /* Desktop outline */
+        border: 1.4px solid rgba(56, 189, 248, 0.75);
+
+      }
+
+      body.light-mode .viewer-captionbar {
+        border: 1.6px solid rgba(59, 130, 246, 0.75);
+      }
+    }
+
+    .viewer-media-area {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      min-width: 0;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+
+      padding-top: var(--viewer-frame-pad);
+      padding-bottom: calc(var(--viewer-caption-h) + 12px);
+      padding-left: max(10px, env(safe-area-inset-left));
+      padding-right: max(10px, env(safe-area-inset-right));
+    }
+
+    .viewer-layout.has-capheight .viewer-media-area {
+      padding-bottom: calc(var(--cap-h, var(--viewer-caption-h)) + 12px);
+    }
+
+    .viewer-frame {
+      position: relative;
+      width: min(var(--viewer-frame-maxw), 98vw);
+      aspect-ratio: var(--viewer-aspect);
+      height: auto;
+
+      max-height: calc(100dvh - var(--cap-h, var(--viewer-caption-h)) - 70px);
+
+      background: transparent;
+      overflow: visible;
+    }
+
+    .viewer-viewport {
+      position: absolute;
+      inset: 0;
+      border-radius: 0;
+      overflow: hidden;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      transform: translateZ(0);
+      -webkit-transform: translateZ(0);
+      clip-path: none;
+    }
+
+    .viewer-btn {
+      position: absolute;
+      top: max(10px, env(safe-area-inset-top));
+      left: max(10px, env(safe-area-inset-left));
+      z-index: 60;
+
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+
+      border: 1px solid rgba(226, 232, 240, 0.35);
+      background: rgba(15, 23, 42, 0.62);
+      color: rgba(255, 255, 255, 0.96);
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform .12s ease, background .2s ease, border-color .2s ease, filter .2s ease, opacity .18s ease;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      font-size: 24px;
+      line-height: 1;
+      padding-bottom: 2px;
+
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.40);
+    }
+
+    body.light-mode .viewer-btn {
+      background: rgba(255, 255, 255, 0.78);
+      border-color: rgba(15, 23, 42, 0.18);
+      color: rgba(15, 23, 42, 0.92);
+      box-shadow: none;
+    }
+
+    .viewer-btn:hover {
+      transform: scale(1.04);
+      background: rgba(56, 189, 248, 0.26);
+      border-color: rgba(56, 189, 248, 0.60);
+      filter: brightness(1.05);
+    }
+
+    body.light-mode .viewer-btn:hover {
+      background: rgba(229, 240, 255, 0.90);
+      border-color: rgba(59, 130, 246, 0.35);
+      filter: none;
+    }
+
+    .viewer-btn:active {
+      transform: scale(0.98);
+    }
+
+    .viewer-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 46px;
+      height: 46px;
+      border-radius: 999px;
+
+      border: 1px solid rgba(226, 232, 240, 0.35);
+      background: rgba(15, 23, 42, 0.62);
+      color: rgba(255, 255, 255, 0.96);
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      transition: transform .12s ease, background .2s ease, border-color .2s ease, opacity .2s ease, filter .2s ease;
+      z-index: 70;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      font-size: 28px;
+      line-height: 1;
+      padding-bottom: 2px;
+
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.40);
+    }
+
+    body.light-mode .viewer-nav {
+      background: rgba(255, 255, 255, 0.70);
+      border-color: rgba(15, 23, 42, 0.16);
+      color: rgba(15, 23, 42, 0.92);
+      box-shadow: none;
+    }
+
+    .viewer-nav:hover {
+      transform: translateY(-50%) scale(1.04);
+      background: rgba(56, 189, 248, 0.26);
+      border-color: rgba(56, 189, 248, 0.60);
+      filter: brightness(1.05);
+    }
+
+    body.light-mode .viewer-nav:hover {
+      background: rgba(229, 240, 255, 0.88);
+      border-color: rgba(59, 130, 246, 0.35);
+      filter: none;
+    }
+
+    .viewer-nav:active {
+      transform: translateY(-50%) scale(0.98);
+    }
+
+    .viewer-nav.prev {
+      left: -62px;
+    }
+
+    .viewer-nav.next {
+      right: -62px;
+    }
+
+    .viewer-nav[disabled] {
+      opacity: 0.18 !important;
+      pointer-events: auto !important;
+      cursor: default;
+    }
+
+    .viewer-track {
+      height: 100%;
+      width: 100%;
+      display: flex;
+      will-change: transform;
+      transform: translate3d(0, 0, 0);
+      transition: transform .22s ease;
+    }
+
+    .viewer-track.dragging {
+      transition: none;
+      cursor: grabbing;
+    }
+
+    .viewer-slide {
+      flex: 0 0 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      padding: 0;
+      background: transparent;
+      position: relative;
+    }
+
+    /* =========================================
+          Image zoom stage
+    ========================================= */
+    .zoom-stage {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      background: transparent;
+      touch-action: none;
+    }
+
+    .zoom-img {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate3d(-50%, -50%, 0);
+      transform-origin: 50% 50%;
+      will-change: transform;
+      max-width: none;
+      max-height: none;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      -webkit-user-drag: none;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    @media (hover:hover) and (pointer:fine) {
+      .zoom-img {
+        width: auto;
+        height: auto;
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+      }
+    }
+
+    @media (hover:hover) and (pointer:fine) {
+      #viewerOverlay.active .zoom-stage {
+        cursor: zoom-in;
+      }
+
+      #viewerOverlay.active.desktop-zoomed .zoom-stage {
+        cursor: grab;
+      }
+
+      #viewerOverlay.active.desktop-zoomed .zoom-stage:active {
+        cursor: grabbing;
+      }
+    }
+
+    @media (pointer: coarse) {
+
+      .viewer-overlay,
+      .viewer-viewport,
+      .viewer-track,
+      .viewer-slide,
+      .zoom-stage {
+        touch-action: none !important;
+      }
+    }
+
+    .viewer-slide .xplayer {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* ==========================
+          Caption bar content
+    ========================== */
+    .vc-inner {
+      width: 100%;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .vc-text {
+      min-width: 0;
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+      overflow: visible;
+    }
+
+    .vc-titlebubble {
+      flex: 0 0 auto;
+      font-weight: 950;
+      font-size: 1.05rem;
+      letter-spacing: 0.25px;
+      white-space: nowrap;
+      max-width: min(44vw, 460px);
+      overflow: hidden;
+      text-overflow: ellipsis;
+
+      padding: 6px 10px;
+      border-radius: 999px;
+
+      color: var(--cap-pill-fg);
+      background: var(--cap-pill-bg);
+      border: 1px solid var(--cap-pill-border);
+      box-shadow: var(--cap-pill-shadow);
+
+      margin-top: 0px;
+    }
+
+    .vc-caption {
+      font-size: 1.0rem;
+      font-weight: 400;
+      line-height: 1.2;
+      color: var(--muted);
+
+      /* remove caption-only styling */
+      text-shadow: none;
+      padding-top: 0;
+    }
+
+    body.light-mode .vc-caption {
+      color: rgba(15, 23, 42, 0.78);
+      text-shadow: none;
+    }
+
+    .vc-count {
+      flex: 0 0 auto;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      padding: 10px 14px;
+      border-radius: 16px;
+
+      background: var(--cap-pill-bg);
+      border: 1px solid var(--cap-pill-border);
+      box-shadow: var(--cap-pill-shadow);
+
+      line-height: 1;
+      white-space: nowrap;
+      user-select: none;
+      margin-top: 0px;
+      min-width: 86px;
+    }
+
+    .vc-count-top,
+    .vc-count-big {
+      color: var(--cap-pill-fg);
+      background: none;
+      -webkit-background-clip: initial;
+      background-clip: initial;
+      -webkit-text-fill-color: currentColor;
+    }
+
+    .vc-count-top {
+      font-weight: 900;
+      font-size: 1.05rem;
+      letter-spacing: 0.2px;
+      margin-bottom: 2px;
+    }
+
+    .vc-count-big {
+      font-weight: 950;
+      font-size: 4.1rem;
+      letter-spacing: -0.02em;
+      line-height: 0.9;
+      transform: translateY(0px);
+    }
+
+    @media (max-width: 900px) {
+      .vc-count {
+        min-width: 82px;
+        padding: 10px 12px;
+      }
+
+      .vc-count-top {
+        font-size: 1.0rem;
+      }
+
+      .vc-count-big {
+        font-size: 3.8rem;
+      }
+    }
+
+    .viewer-overlay.ui-hidden .viewer-captionbar {
+      opacity: 0;
+      transform: translateY(8px);
+      pointer-events: none;
+    }
+
+    .viewer-overlay.ui-hidden .viewer-btn {
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.98);
+    }
+
+    @media (max-width: 900px) {
+      :root {
+        --viewer-caption-h: 96px;
+      }
+
+      body.light-mode {
+        --viewer-caption-h: 96px;
+      }
+
+      :root {
+        --viewer-frame-maxw: 98vw;
+        --viewer-frame-pad: 10px;
+      }
+
+      body.light-mode {
+        --viewer-frame-maxw: 98vw;
+        --viewer-frame-pad: 10px;
+      }
+
+      .viewer-nav {
+        display: none;
+      }
+
+      .vc-caption {
+        flex-basis: 320px;
+      }
+
+      .vc-titlebubble {
+        max-width: 88vw;
+      }
+
+      .viewer-captionbar {
+        max-height: min(52dvh, calc(100dvh - 110px));
+      }
+    }
+
+    /* ======================================================
+          Static video + control bar only
+    ====================================================== */
+    .xplayer {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      overflow: hidden;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+
+      /* allow the viewer to own swipes */
+      touch-action: none;
+    }
+
+    .xplayer video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center center;
+      background: transparent;
+      display: block;
+      outline: none;
+      border-radius: 0;
+      transform: translateZ(0);
+      -webkit-transform: translateZ(0);
+
+      /* remove any direct interaction on the video itself */
+      pointer-events: none;
+    }
+
+    .xplayer video::-webkit-media-controls {
+      display: none !important;
+    }
+
+    .xplayer video::-webkit-media-controls-enclosure {
+      display: none !important;
+    }
+
+    .xplayer .xp-overlay {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 30;
+    }
+
+    .xplayer .xp-controls {
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity .18s ease, transform .18s ease;
+
+      pointer-events: auto;
+      z-index: 40;
+
+      /* allow a background gradient layer behind the bar without layout changes */
+      isolation: isolate;
+    }
+
+    /* dark gradient behind the visible control bar (helps on white videos) */
+    .xplayer .xp-controls::before {
+      content: "";
+      position: absolute;
+      left: -12px;
+      right: -12px;
+      bottom: -12px;
+      height: 160px;
+
+      background: linear-gradient(to top,
+          rgba(2, 6, 23, 0.72) 0%,
+          rgba(2, 6, 23, 0.35) 40%,
+          rgba(2, 6, 23, 0.0) 78%);
+
+      border-radius: 0px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .xplayer .xp-controls .xp-topbar,
+    .xplayer .xp-controls .xp-row {
+      position: relative;
+      z-index: 1;
+    }
+
+    .xplayer.hide-ui .xp-controls {
+      opacity: 0;
+      transform: translateY(10px);
+      pointer-events: none;
+    }
+
+    .viewer-overlay.ui-hidden .xplayer .xp-controls {
+      opacity: 0;
+      transform: translateY(10px);
+      pointer-events: none;
+    }
+
+    /* ======================================================
+         Loader (basic white ring, no fill)
+         Visible only when .xplayer.loading is true
+    ====================================================== */
+    .xplayer .xp-loader-wrap {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 35;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity .16s ease;
+    }
+
+    .xplayer.loading .xp-loader-wrap {
+      opacity: 1;
+    }
+
+    .xplayer .xp-loader {
+      width: 46px;
+      height: 46px;
+      border-radius: 999px;
+      border: 3px solid rgba(255, 255, 255, 0.92);
+      border-top-color: rgba(255, 255, 255, 0.0);
+      animation: xpSpin .9s linear infinite;
+      filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.35));
+    }
+
+    @keyframes xpSpin {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .xp-topbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0;
+    }
+
+    .xp-range {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.28);
+      outline: none;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    .xp-range::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.96);
+      border: 1px solid rgba(0, 0, 0, 0.18);
+      box-shadow: 0 10px 18px rgba(0, 0, 0, 0.22);
+      margin-top: -1px;
+      opacity: 0;
+      transform: scale(0.6);
+      transition: opacity .12s ease, transform .12s ease;
+    }
+
+    .xplayer.show-seek-thumb .xp-range::-webkit-slider-thumb,
+    .xp-topbar:hover .xp-range::-webkit-slider-thumb {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .xp-range::-moz-range-thumb {
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.96);
+      border: 1px solid rgba(0, 0, 0, 0.18);
+      opacity: 0;
+      transition: opacity .12s ease;
+    }
+
+    .xplayer.show-seek-thumb .xp-range::-moz-range-thumb,
+    .xp-topbar:hover .xp-range::-moz-range-thumb {
+      opacity: 1;
+    }
+
+    .xp-range::-moz-range-track {
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.28);
+    }
+
+    .xp-range::-moz-range-progress {
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.92);
+    }
+
+    .xp-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .xp-left,
+    .xp-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .xp-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      border: none;
+      background: transparent;
+      color: rgba(255, 255, 255, 0.92);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform .12s ease, opacity .15s ease;
+      user-select: none;
+      flex: 0 0 auto;
+      padding: 0;
+      opacity: 0.92;
+      filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.35));
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
+    .xp-btn:hover {
+      transform: scale(1.06);
+      opacity: 1;
+    }
+
+    .xp-btn:active {
+      transform: scale(0.98);
+    }
+
+    .xp-btn svg {
+      width: 28px;
+      height: 28px;
+      fill: currentColor;
+      display: block;
+      pointer-events: none;
+    }
+
+    .xp-time {
+      font-weight: 800;
+      font-size: 0.88rem;
+      color: rgba(255, 255, 255, 0.90);
+      user-select: none;
+      white-space: nowrap;
+      filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.35));
+    }
+
+    .xp-volwrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .xp-volpop {
+      position: absolute;
+      bottom: 44px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 34px;
+      height: 120px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 0;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .14s ease, transform .14s ease;
+      transform-origin: bottom;
+      touch-action: none;
+    }
+
+    .xplayer.vol-open .xp-volpop {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(-50%) translateY(-4px);
+    }
+
+    .xp-volslider {
+      position: relative;
+      width: 6px;
+      height: 92px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.28);
+      cursor: grab;
+      touch-action: none;
+      user-select: none;
+      outline: none;
+    }
+
+    .xp-volslider:active {
+      cursor: grabbing;
+    }
+
+    .xp-volfill {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 50%;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.92);
+      pointer-events: none;
+    }
+
+    .xp-volthumb {
+      position: absolute;
+      left: 50%;
+      transform: translate(-50%, 50%);
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.96);
+      border: 1px solid rgba(0, 0, 0, 0.18);
+      box-shadow: 0 10px 18px rgba(0, 0, 0, 0.22);
+      pointer-events: none;
+    }
+
+    @media (max-width: 900px) {
+      .xplayer .xp-controls {
+        left: 10px;
+        right: 10px;
+        bottom: 12px;
+      }
+
+      .xp-volpop {
+        bottom: 46px;
+        height: 130px;
+      }
+
+      .xp-volslider {
+        height: 96px;
+      }
+    }
+
+    /* ==========================================================
+         MOBILE-ONLY fixes (desktop untouched)
+    ========================================================== */
+    @media (pointer: coarse) {
+      :root {
+        --viewer-backdrop: rgba(3, 9, 24, 0.90);
+        --mobile-cap-collapsed: 132px;
+        --mobile-cap-expanded: 315px;
+      }
+
+      body.light-mode {
+        --viewer-backdrop: rgba(2, 6, 23, 0.88);
+      }
+
+      .viewer-captionbar {
+        height: calc(var(--mobile-cap-collapsed) + env(safe-area-inset-bottom));
+        min-height: calc(var(--mobile-cap-collapsed) + env(safe-area-inset-bottom));
+        max-height: calc(var(--mobile-cap-expanded) + env(safe-area-inset-bottom));
+        overflow: hidden;
+        align-items: stretch;
+      }
+
+      .viewer-captionbar .vc-inner {
+        height: 100%;
+        align-items: stretch;
+      }
+
+      .viewer-captionbar .vc-titlebubble,
+      .viewer-captionbar .vc-count {
+        align-self: flex-start;
+        flex: 0 0 auto;
+      }
+
+      .viewer-captionbar .vc-text {
+        align-items: flex-start;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        gap: 8px;
+        min-width: 0;
+        flex: 1 1 auto;
+      }
+
+      .viewer-captionbar .vc-caption {
+        flex: 1 1 auto;
+        min-width: 0;
+        max-height: calc(var(--mobile-cap-expanded) - 28px);
+        overflow: hidden;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+        padding-right: 2px;
+      }
+
+      .viewer-media-area {
+        padding-top: 0;
+        padding-left: 0;
+        padding-right: 0;
+        padding-bottom: calc(var(--cap-h, var(--mobile-cap-collapsed)) + 10px);
+      }
+
+      .viewer-frame {
+        width: 100vw;
+        max-width: 100vw;
+        height: calc(100dvh - var(--cap-h, var(--mobile-cap-collapsed)));
+        max-height: calc(100dvh - var(--cap-h, var(--mobile-cap-collapsed)));
+        aspect-ratio: auto;
+      }
+
+      .viewer-viewport {
+        border-radius: 0;
+        clip-path: none;
+      }
+
+      .viewer-overlay.zoomed {
+        --cap-h: 0px;
+      }
+
+      .viewer-overlay.zoomed .viewer-media-area {
+        padding-bottom: 0 !important;
+      }
+
+      .viewer-overlay.zoomed .viewer-frame {
+        height: 100dvh !important;
+        max-height: 100dvh !important;
+      }
+
+      .viewer-overlay.zoomed .viewer-captionbar {
+        opacity: 0 !important;
+        transform: translateY(14px) !important;
+        pointer-events: none !important;
+      }
+
+      .viewer-overlay.zoomed .viewer-btn {
+        opacity: 0 !important;
+        pointer-events: none !important;
+        transform: scale(0.98) !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header id="siteHeader">
+    <div class="nav-container">
+      <nav>
+        <div class="nav-left">
+          <div class="brand">Sean A'Hearn</div>
+          <div class="nav-actions">
+            <a class="pill" href="../../assets/YourName_CV.pdf" target="_blank" rel="noopener">CV ↗</a>
+
+            <a class="btn secondary btn-compact" href="mailto:seanahearn2002@gmail.com" aria-label="Email">
+              <span class="icon-mail" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M4 6.5C4 5.67157 4.67157 5 5.5 5H18.5C19.3284 5 20 5.67157 20 6.5V17.5C20 18.3284 19.3284 19 18.5 19H5.5C4 19 4 18.3284 4 17.5V6.5Z"
+                    stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
+                  <path d="M5.5 7L12 12.25L18.5 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                </svg>
+              </span>
+              <span class="sr-only">Email</span>
+            </a>
+
+            <a class="btn secondary btn-compact" href="https://www.linkedin.com/in/sean-ahearn/" target="_blank"
+              rel="noopener">
+              <span class="icon-ln">in</span>
+              <span class="sr-only">LinkedIn</span>
+            </a>
+          </div>
+        </div>
+
+        <a href="../../index.html" class="back-main-btn">
+          <button class="btn secondary btn-compact" type="button">
+            ← Back to portfolio
+          </button>
+        </a>
+
+      </nav>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="container">
+      <article class="project-card">
+        <h1>Sun Safety Sensor</h1>
+
+        <div class="project-meta">
+          <div class="meta-row">
+            <span class="tag" id="dateBubble"></span>
+          </div>
+
+          <div class="meta-row stack">
+            <div class="meta-group" aria-label="Skills used">
+              <div class="meta-group-title skills">Skills</div>
+              <div class="meta-bubbles">
+                <span class="tag tag-skill">Prototyping</span>
+                <span class="tag tag-skill">3D Printing</span>
+                <span class="tag tag-skill">Soldering</span>
+                <span class="tag tag-skill">Team Collaboration</span>
+              </div>
+            </div>
+
+            <div class="meta-group" aria-label="Software used">
+              <div class="meta-group-title software">Software & Tools</div>
+              <div class="meta-bubbles">
+                <span class="tag tag-software">LabVIEW</span>
+                <span class="tag tag-software">MATLAB</span>
+                <span class="tag tag-software">Autodesk Fusion</span>
+                <span class="tag tag-software">LTSpice</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="project-description" id="projectDesc">
+          <p>
+            Collaborated in a team of five to develop a wrist-worn wearable device that continuously monitored UV
+            exposure and body temperature, using conditional logic to trigger specific LED alert patterns when
+            thresholds were exceeded and prompt users to take action against potential skin damage and heat-related
+            illness.
+          </p>
+        </div>
+
+        <!-- Collage grid -->
+        <section class="media-block" aria-label="Project media">
+          <div class="media-grid" id="mediaGrid" data-count="1" aria-label="Project media collage (click to open)">
+          </div>
+
+          <!-- hidden source list -->
+          <div id="thumbRow" style="display:none;">
+            <img src="../../assets/projects/sun-safety-sensor-1.jpeg" alt="Sun Safety Sensor"
+              data-full="../../assets/projects/sun-safety-sensor-1.jpeg"
+              data-caption="Assembled Sun Safety Sensor device.">
+            <img src="../../assets/projects/sun-safety-sensor-2.jpeg" alt="Block diagram"
+              data-full="../../assets/projects/sun-safety-sensor-2.jpeg"
+              data-caption="Basic block diagram of the inputs, processes and outputs.">
+            <img src="../../assets/projects/sun-safety-sensor-6.jpeg" alt="Wearable testing"
+              data-full="../../assets/projects/sun-safety-sensor-6.jpeg"
+              data-caption="Indoor and outdoor testing of the wearable device.">
+            <img src="../../assets/projects/sun-safety-sensor-5.jpeg" alt="UV logic"
+              data-full="../../assets/projects/sun-safety-sensor-5.jpeg"
+              data-caption="Various LED colours indicating different UV exposure levels.">
+            <img src="../../assets/projects/sun-safety-sensor-3.jpeg" alt="Circuit diagram"
+              data-full="../../assets/projects/sun-safety-sensor-3.jpeg"
+              data-caption="Diagram of device circuitry and connections.">
+            <img src="../../assets/projects/sun-safety-sensor-4.jpeg" alt="LabVIEW functionality"
+              data-full="../../assets/projects/sun-safety-sensor-4.jpeg"
+              data-caption="LabVIEW code behind the functionality of the UV sensor and associated alert system.">
+            <video src="../../assets/projects/sun-safety-sensor.mp4" aria-label="Device demo video"
+              data-full="../../assets/projects/sun-safety-sensor.mp4"
+              data-thumb="../../assets/projects/sun-safety-sensor-thumb.jpg"
+              data-caption="Short demo video showcasing device response to high user body temperature and UV exposure."
+              muted playsinline></video>
+          </div>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <span>© <span id="year"></span> Sean A'Hearn</span>
+      <button id="themeToggle" class="theme-toggle" type="button">
+        <span id="themeToggleIcon" class="theme-toggle-icon" aria-hidden="true">☀</span>
+        <span class="theme-toggle-label">Dark mode</span>
+      </button>
+    </div>
+  </footer>
+
+  <!-- Viewer Overlay -->
+  <div id="viewerOverlay" class="viewer-overlay" aria-hidden="true">
+    <div class="viewer-stage" role="dialog" aria-modal="true" aria-label="Media viewer">
+      <button class="viewer-btn" id="viewerClose" type="button" aria-label="Close viewer">×</button>
+
+      <div class="viewer-layout" id="viewerLayout">
+        <section class="viewer-media-area" id="viewerShell">
+          <div class="viewer-frame" id="viewerFrame">
+            <button class="viewer-nav prev" id="viewerPrev" type="button" aria-label="Previous">‹</button>
+            <button class="viewer-nav next" id="viewerNext" type="button" aria-label="Next">›</button>
+
+            <div class="viewer-viewport" id="viewerViewport">
+              <div class="viewer-track" id="viewerTrack"></div>
+            </div>
+          </div>
+        </section>
+
+        <div class="viewer-captionbar" id="viewerCaptionBar" aria-label="Media caption">
+          <div class="vc-inner">
+            <div class="vc-text">
+              <span class="vc-titlebubble" id="vcTitle">Title</span>
+              <span class="vc-caption" id="vcCaption">Caption</span>
+            </div>
+
+            <div class="vc-count" id="vcCount" aria-label="Media count">
+              <div class="vc-count-top">1 of</div>
+              <div class="vc-count-big">1</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("embed") === "1") document.body.classList.add("embedded");
+    })();
+
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    (function syncHeaderHeight() {
+      const header = document.getElementById("siteHeader");
+      function setH() {
+        if (!header) return;
+        if (document.body.classList.contains("embedded")) return;
+        const h = header.getBoundingClientRect().height;
+        document.documentElement.style.setProperty("--header-h", Math.round(h) + "px");
+      }
+      setH();
+      window.addEventListener("resize", setH, { passive: true });
+      window.addEventListener("orientationchange", setH, { passive: true });
+      setTimeout(setH, 50);
+      setTimeout(setH, 250);
+    })();
+
+    // ===== Theme toggle =====
+    const themeToggle = document.getElementById("themeToggle");
+    const themeToggleIcon = document.getElementById("themeToggleIcon");
+    const themeToggleLabel = document.querySelector(".theme-toggle-label");
+    const THEME_KEY = "portfolio-theme";
+
+    function applyTheme(theme) {
+      if (theme === "light") {
+        document.body.classList.add("light-mode");
+        themeToggleIcon.textContent = "☀";
+        themeToggleLabel.textContent = "Light mode";
+        themeToggle.setAttribute("aria-label", "Switch to dark mode");
+      } else {
+        document.body.classList.remove("light-mode");
+        themeToggleIcon.textContent = "☾";
+        themeToggleLabel.textContent = "Dark mode";
+        themeToggle.setAttribute("aria-label", "Switch to light mode");
+      }
+    }
+
+    (function initTheme() {
+      const saved = localStorage.getItem(THEME_KEY);
+      if (saved === "light" || saved === "dark") applyTheme(saved);
+      else {
+        const prefersLight = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
+        applyTheme(prefersLight ? "light" : "dark");
+      }
+    })();
+
+    themeToggle.addEventListener("click", () => {
+      const isLight = document.body.classList.contains("light-mode");
+      const next = isLight ? "dark" : "light";
+      applyTheme(next);
+      localStorage.setItem(THEME_KEY, next);
+    });
+
+    // Meta date bubble
+    const yearMeta = document.querySelector('meta[name="project-year"]');
+    const dateBubble = document.getElementById("dateBubble");
+    if (yearMeta && dateBubble) dateBubble.textContent = yearMeta.content;
+
+    // Add counts to group titles
+    (function addMetaCounts() {
+      const skillsGroup = document.querySelector('.meta-group[aria-label="Skills used"]');
+      const softwareGroup = document.querySelector('.meta-group[aria-label="Software used"]');
+
+      function injectCount(groupEl, selector) {
+        if (!groupEl) return;
+        const title = groupEl.querySelector(".meta-group-title");
+        if (!title) return;
+
+        const existing = title.querySelector(".count-badge");
+        if (existing) existing.remove();
+
+        const count = groupEl.querySelectorAll(selector).length;
+
+        const badge = document.createElement("span");
+        badge.className = "count-badge";
+        badge.textContent = String(count);
+        title.appendChild(badge);
+      }
+
+      injectCount(skillsGroup, ".tag-skill");
+      injectCount(softwareGroup, ".tag-software");
+    })();
+
+    // ==========================
+    // Build items from thumbRow
+    // ==========================
+    const thumbs = Array.from(document.querySelectorAll("#thumbRow img, #thumbRow video"));
+
+    function getVideoThumbPath(videoEl, fullPath) {
+      const explicit = videoEl.getAttribute("data-thumb");
+      if (explicit) return explicit;
+      const clean = (fullPath || "").split("?")[0].split("#")[0];
+      const dot = clean.lastIndexOf(".");
+      if (dot === -1) return "";
+      return clean.slice(0, dot) + "-thumb.jpg";
+    }
+
+    const items = thumbs.map((el) => {
+      const isVideo = el.tagName.toLowerCase() === "video";
+      const src = el.getAttribute("data-full") || el.getAttribute("src");
+      const caption = el.getAttribute("data-caption") || "";
+      const alt = el.getAttribute("alt") || el.getAttribute("aria-label") || (isVideo ? "Video" : "Image");
+      const thumbSrc = isVideo ? (el.getAttribute("data-thumb") || getVideoThumbPath(el, src)) : src;
+      return { isVideo, src, caption, alt, thumbSrc };
+    });
+
+    // ==========================
+    // Twitter-like collage grid
+    // ==========================
+    const mediaGrid = document.getElementById("mediaGrid");
+
+    function createPlayBadge() {
+      const badge = document.createElement("div");
+      badge.className = "play-badge";
+      badge.innerHTML = `
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 7.5v9l8-4.5-8-4.5z"></path>
+        </svg>
+      `;
+      return badge;
+    }
+
+    function buildMediaGrid() {
+      if (!mediaGrid) return;
+      mediaGrid.innerHTML = "";
+
+      const total = items.length;
+      const shown = Math.min(total, 4);
+
+      mediaGrid.setAttribute("data-count", String(Math.max(1, shown)));
+
+      for (let i = 0; i < shown; i++) {
+        const it = items[i];
+        const tile = document.createElement("div");
+        tile.className = "tile";
+        tile.dataset.index = String(i);
+
+        const img = document.createElement("img");
+        img.src = it.thumbSrc || it.src;
+        img.alt = it.alt;
+        tile.appendChild(img);
+
+        if (it.isVideo) {
+          tile.appendChild(createPlayBadge());
+          img.addEventListener("error", () => {
+            console.warn("[MediaGrid] Video thumbnail missing:", it.thumbSrc, "Add data-thumb or create a thumb image.");
+          });
+        }
+
+        if (i === 3 && total > 3) {
+          const more = document.createElement("div");
+          more.className = "more-overlay";
+          more.textContent = `+${total - 3}`;
+          tile.appendChild(more);
+        }
+
+        tile.addEventListener("click", () => openViewerAt(i));
+        mediaGrid.appendChild(tile);
+      }
+    }
+
+    // ==========================
+    // Helpers
+    // ==========================
+    function isMobileLike() {
+      return window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
+    }
+    function isDesktopFine() {
+      return window.matchMedia && window.matchMedia("(hover:hover) and (pointer:fine)").matches;
+    }
+    function safeStop(e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    // suppress taps after a swipe/pinch (prevents accidental toggles)
+    window.__viewerSuppressTapUntil = 0;
+    function suppressTaps(ms = 380) {
+      window.__viewerSuppressTapUntil = Date.now() + ms;
+    }
+    function tapsSuppressed() {
+      return Date.now() < (window.__viewerSuppressTapUntil || 0);
+    }
+
+    // ==========================
+    // Video player helpers
+    // ==========================
+    function fmtTime(secs) {
+      if (!Number.isFinite(secs) || secs < 0) secs = 0;
+      const m = Math.floor(secs / 60);
+      const s = Math.floor(secs % 60);
+      return `${m}:${String(s).padStart(2, "0")}`;
+    }
+
+    function svgIcon(name) {
+      if (name === "play") return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>`;
+      if (name === "pause") return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg>`;
+      if (name === "vol") return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.06c1.48-.74 2.5-2.26 2.5-4.03z"/></svg>`;
+      if (name === "mute") return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3zm13.59 3 2.7 2.7-1.06 1.06L15.53 13l-2.7 2.76-1.06-1.06L14.47 12l-2.7-2.7 1.06-1.06L15.53 11l2.7-2.76 1.06 1.06z"/></svg>`;
+
+      if (name === "fs") return `
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10.8 10.8L5.2 5.2"/>
+            <polyline points="7.6,5.2 5.2,5.2 5.2,7.6"/>
+            <path d="M13.2 13.2L18.8 18.8"/>
+            <polyline points="16.4,18.8 18.8,18.8 18.8,16.4"/>
+          </g>
+        </svg>`;
+
+      if (name === "exit") return `
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5.2 5.2L10.8 10.8"/>
+            <polyline points="8.4,10.8 10.8,10.8 10.8,8.4"/>
+            <path d="M18.8 18.8L13.2 13.2"/>
+            <polyline points="15.6,13.2 13.2,13.2 13.2,15.6"/>
+          </g>
+        </svg>`;
+
+      return "";
+    }
+
+    function isFS() {
+      return !!(document.fullscreenElement || document.webkitFullscreenElement);
+    }
+
+    function requestFS(el) {
+      const fn = el.requestFullscreen || el.webkitRequestFullscreen;
+      if (fn) { try { fn.call(el); return true; } catch (e) { } }
+      return false;
+    }
+
+    function exitFS() {
+      const fn = document.exitFullscreen || document.webkitExitFullscreen;
+      if (fn) { try { fn.call(document); return true; } catch (e) { } }
+      return false;
+    }
+
+    // - controls ONLY from the bar buttons/sliders
+    // - tapping the video area does NOT play/pause
+    // - viewer overlay tap toggles the WHOLE UI (caption + X + controls) like Twitter
+    function initXPlayer(wrapper, video) {
+      let scrubbing = false;
+      let volTimer = null;
+      let volHover = false;
+      let volDragging = false;
+
+      // Desktop starts hidden (hover shows). Mobile starts visible (viewer UI controls visibility).
+      if (isDesktopFine()) wrapper.classList.add("hide-ui");
+      else wrapper.classList.remove("hide-ui");
+
+      wrapper.classList.remove("vol-open");
+      wrapper.classList.remove("show-seek-thumb");
+      wrapper.classList.remove("loading");
+
+      // overlay sized to visible video on desktop
+      const overlay = document.createElement("div");
+      overlay.className = "xp-overlay";
+
+      // Loader (white ring)
+      const loaderWrap = document.createElement("div");
+      loaderWrap.className = "xp-loader-wrap";
+      loaderWrap.innerHTML = `<div class="xp-loader" aria-hidden="true"></div>`;
+      overlay.appendChild(loaderWrap);
+
+      const controls = document.createElement("div");
+      controls.className = "xp-controls";
+      controls.innerHTML = `
+        <div class="xp-topbar">
+          <input class="xp-range" type="range" min="0" max="1000" value="0" step="1" aria-label="Seek">
+        </div>
+
+        <div class="xp-row">
+          <div class="xp-left">
+            <button class="xp-btn xp-play" type="button" aria-label="Play">${svgIcon("play")}</button>
+
+            <div class="xp-volwrap">
+              <button class="xp-btn xp-mute" type="button" aria-label="Mute">${svgIcon("vol")}</button>
+              <div class="xp-volpop" aria-hidden="true">
+                <div class="xp-volslider" role="slider" tabindex="0"
+                  aria-label="Volume" aria-valuemin="0" aria-valuemax="1" aria-valuenow="1">
+                  <div class="xp-volfill"></div>
+                  <div class="xp-volthumb" aria-hidden="true"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="xp-time"><span class="xp-tcur">0:00</span> / <span class="xp-tdur">0:00</span></div>
+          </div>
+
+          <div class="xp-right">
+            <button class="xp-btn xp-fs" type="button" aria-label="Fullscreen">${svgIcon("fs")}</button>
+          </div>
+        </div>
+      `;
+
+      overlay.appendChild(controls);
+      wrapper.appendChild(overlay);
+
+      const btnPlay = controls.querySelector(".xp-play");
+      const btnMute = controls.querySelector(".xp-mute");
+      const btnFs = controls.querySelector(".xp-fs");
+      const rngSeek = controls.querySelector(".xp-range");
+
+      const volWrap = controls.querySelector(".xp-volwrap");
+      const volPop = controls.querySelector(".xp-volpop");
+      const volSlider = controls.querySelector(".xp-volslider");
+      const volFill = controls.querySelector(".xp-volfill");
+      const volThumb = controls.querySelector(".xp-volthumb");
+
+      const tCur = controls.querySelector(".xp-tcur");
+      const tDur = controls.querySelector(".xp-tdur");
+
+      function addTap(el, handler, opts = {}) {
+        const stop = opts.stop !== false;
+        let lastPointerUp = 0;
+
+        el.addEventListener("pointerup", (e) => {
+          lastPointerUp = Date.now();
+          if (stop) { e.preventDefault(); e.stopPropagation(); }
+          handler(e);
+        }, { passive: false });
+
+        el.addEventListener("click", (e) => {
+          if (Date.now() - lastPointerUp < 450) return;
+          if (stop) { e.preventDefault(); e.stopPropagation(); }
+          handler(e);
+        }, { passive: false });
+      }
+
+      function isInFullscreen() {
+        return isFS() || !!video.webkitDisplayingFullscreen;
+      }
+
+      function requestFullscreenSmart() {
+        if (requestFS(wrapper)) return;
+        if (requestFS(video)) return;
+        const enter = video.webkitEnterFullscreen;
+        if (enter) { try { enter.call(video); } catch (e) { } }
+      }
+
+      function showControls() { wrapper.classList.remove("hide-ui"); }
+      function hideControls() {
+        wrapper.classList.add("hide-ui");
+        wrapper.classList.remove("vol-open");
+      }
+
+      function setSeekFill(pct) {
+        const base = "rgba(255,255,255,0.28)";
+        const fill = "rgba(255,255,255,0.92)";
+        rngSeek.style.background = `linear-gradient(to right, ${fill} 0%, ${fill} ${pct}%, ${base} ${pct}%, ${base} 100%)`;
+      }
+
+      function updateIcons() {
+        const playing = !video.paused && !video.ended;
+        btnPlay.innerHTML = playing ? svgIcon("pause") : svgIcon("play");
+        btnPlay.setAttribute("aria-label", playing ? "Pause" : "Play");
+
+        const muted = video.muted || video.volume === 0;
+        btnMute.innerHTML = muted ? svgIcon("mute") : svgIcon("vol");
+        btnMute.setAttribute("aria-label", muted ? "Unmute" : "Mute");
+
+        const inFs = isInFullscreen();
+        btnFs.innerHTML = inFs ? svgIcon("exit") : svgIcon("fs");
+        btnFs.setAttribute("aria-label", inFs ? "Exit fullscreen" : "Fullscreen");
+      }
+
+      function togglePlay() {
+        if (video.paused || video.ended) video.play().catch(() => { });
+        else video.pause();
+      }
+
+      function syncTime() {
+        const dur = Number.isFinite(video.duration) ? video.duration : 0;
+        const cur = Number.isFinite(video.currentTime) ? video.currentTime : 0;
+
+        tCur.textContent = fmtTime(cur);
+        tDur.textContent = fmtTime(dur);
+
+        if (!scrubbing) {
+          const v = dur > 0 ? Math.round((cur / dur) * 1000) : 0;
+          rngSeek.value = String(Math.max(0, Math.min(1000, v)));
+          const pct = (Number(rngSeek.value) / 1000) * 100;
+          setSeekFill(pct);
+        }
+      }
+
+      function openVol() {
+        wrapper.classList.add("vol-open");
+        volHover = true;
+        showControls();
+      }
+      function closeVolSoon() {
+        volHover = false;
+        if (volTimer) clearTimeout(volTimer);
+        volTimer = setTimeout(() => {
+          if (!volHover && !volDragging) wrapper.classList.remove("vol-open");
+        }, 140);
+      }
+
+      function clamp01(v) { return Math.max(0, Math.min(1, v)); }
+
+      function setVolUI(v) {
+        const vv = clamp01(v);
+        if (volFill) volFill.style.height = (vv * 100) + "%";
+        if (volThumb) volThumb.style.bottom = (vv * 100) + "%";
+        if (volSlider) volSlider.setAttribute("aria-valuenow", String(vv.toFixed(2)));
+      }
+
+      function getEffectiveVol() {
+        return (video.muted || video.volume === 0) ? 0 : clamp01(video.volume);
+      }
+
+      function volFromClientY(clientY) {
+        const r = volSlider.getBoundingClientRect();
+        const y = clientY - r.top;
+        const clampedY = Math.max(0, Math.min(r.height, y));
+        return clamp01(1 - (clampedY / r.height));
+      }
+
+      function applyVolume(v) {
+        const vv = clamp01(v);
+        video.muted = false;
+        video.volume = vv;
+        setVolUI(vv);
+        updateIcons();
+        openVol();
+      }
+
+      function volPointerDown(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        volDragging = true;
+        openVol();
+        applyVolume(volFromClientY(e.clientY));
+        try { volSlider.setPointerCapture(e.pointerId); } catch (err) { }
+      }
+      function volPointerMove(e) {
+        if (!volDragging) return;
+        e.preventDefault();
+        e.stopPropagation();
+        applyVolume(volFromClientY(e.clientY));
+      }
+      function volPointerUp(e) {
+        if (!volDragging) return;
+        e.preventDefault();
+        e.stopPropagation();
+        volDragging = false;
+        closeVolSoon();
+      }
+
+      function volKeyDown(e) {
+        const step = 0.05;
+        let v = getEffectiveVol();
+        if (e.key === "ArrowUp" || e.key === "ArrowRight") {
+          e.preventDefault();
+          applyVolume(v + step);
+        }
+        if (e.key === "ArrowDown" || e.key === "ArrowLeft") {
+          e.preventDefault();
+          applyVolume(v - step);
+        }
+        if (e.key === "Home") {
+          e.preventDefault();
+          applyVolume(0);
+        }
+        if (e.key === "End") {
+          e.preventDefault();
+          applyVolume(1);
+        }
+      }
+
+      // keep native controls off so no big play overlay / tap-to-play UI
+      video.controls = false;
+      video.playsInline = true;
+      video.preload = "metadata";
+      if (!Number.isFinite(video.volume)) video.volume = 1;
+
+      // overlay sizing on desktop to match "contained" video box
+      function syncOverlayBox() {
+        if (!overlay) return;
+
+        if (!isDesktopFine()) {
+          overlay.style.width = "100%";
+          overlay.style.height = "100%";
+          return;
+        }
+
+        const vw = Number.isFinite(video.videoWidth) ? video.videoWidth : 0;
+        const vh = Number.isFinite(video.videoHeight) ? video.videoHeight : 0;
+        if (!vw || !vh) {
+          overlay.style.width = "100%";
+          overlay.style.height = "100%";
+          return;
+        }
+
+        const r = wrapper.getBoundingClientRect();
+        const W = r.width || wrapper.clientWidth || 1;
+        const H = r.height || wrapper.clientHeight || 1;
+
+        const scale = Math.min(W / vw, H / vh);
+        const boxW = Math.max(1, Math.round(vw * scale));
+        const boxH = Math.max(1, Math.round(vh * scale));
+
+        overlay.style.width = boxW + "px";
+        overlay.style.height = boxH + "px";
+      }
+
+      let ro = null;
+      if (window.ResizeObserver) {
+        ro = new ResizeObserver(() => syncOverlayBox());
+        try { ro.observe(wrapper); } catch (e) { }
+      }
+
+      /* ==========================================================
+         Loading spinner logic (debounced to stop tap flicker)
+         - Shows only if buffering persists > 220ms
+         - Only when "should be playing" (not paused/ended)
+      ========================================================== */
+      let loaderTimer = null;
+      let loaderWanted = false;
+
+      function setLoading(on) {
+        wrapper.classList.toggle("loading", !!on);
+      }
+
+      function shouldShowLoader() {
+        if (video.paused || video.ended) return false;
+
+        const notEnoughData = video.readyState < 3; // HAVE_FUTURE_DATA
+        const inNetwork = (video.networkState === 2); // NETWORK_LOADING (best-effort)
+        return !!(notEnoughData || inNetwork);
+      }
+
+      function requestLoader(on) {
+        loaderWanted = !!on;
+
+        // hide immediately + cancel pending show
+        if (!loaderWanted) {
+          if (loaderTimer) { clearTimeout(loaderTimer); loaderTimer = null; }
+          setLoading(false);
+          return;
+        }
+
+        // already visible
+        if (wrapper.classList.contains("loading")) return;
+
+        // delay show to prevent micro-flickers on UI toggles
+        if (!loaderTimer) {
+          loaderTimer = setTimeout(() => {
+            loaderTimer = null;
+
+            // show only if still buffering AND still trying to play
+            if (shouldShowLoader() && !video.paused && !video.ended) {
+              setLoading(true);
+            }
+          }, 220);
+        }
+      }
+
+      function refreshLoader() {
+        requestLoader(shouldShowLoader());
+      }
+
+      let rafId = 0;
+      function loaderRAF() {
+        if (!wrapper.isConnected) return;
+        refreshLoader();
+        rafId = requestAnimationFrame(loaderRAF);
+      }
+      rafId = requestAnimationFrame(loaderRAF);
+
+      setVolUI(getEffectiveVol());
+      syncTime();
+      updateIcons();
+      syncOverlayBox();
+      refreshLoader();
+
+      // Controls ONLY from the bar
+      addTap(btnPlay, () => { togglePlay(); showControls(); });
+
+      addTap(btnMute, () => {
+        if (video.muted || video.volume === 0) {
+          video.muted = false;
+          if (video.volume === 0) video.volume = 1;
+        } else {
+          video.muted = true;
+        }
+        setVolUI(getEffectiveVol());
+        updateIcons();
+        showControls();
+      });
+
+      addTap(btnFs, () => {
+        if (!isInFullscreen()) requestFullscreenSmart();
+        else exitFS();
+        setTimeout(() => { updateIcons(); syncOverlayBox(); }, 80);
+        showControls();
+      });
+
+      // volume hover (desktop)
+      volWrap.addEventListener("mouseenter", () => { if (!isMobileLike()) openVol(); });
+      volWrap.addEventListener("mouseleave", () => { if (!isMobileLike()) closeVolSoon(); });
+      volPop.addEventListener("mouseenter", () => { if (!isMobileLike()) openVol(); });
+      volPop.addEventListener("mouseleave", () => { if (!isMobileLike()) closeVolSoon(); });
+
+      // volume click (mobile)
+      volWrap.addEventListener("click", (e) => {
+        if (!isMobileLike()) return;
+        if (!e.target.closest(".xp-mute")) return;
+        e.preventDefault(); e.stopPropagation();
+        wrapper.classList.toggle("vol-open");
+        showControls();
+      });
+
+      volSlider.addEventListener("pointerdown", volPointerDown);
+      volSlider.addEventListener("pointermove", volPointerMove);
+      volSlider.addEventListener("pointerup", volPointerUp);
+      volSlider.addEventListener("pointercancel", volPointerUp);
+      volSlider.addEventListener("keydown", volKeyDown);
+
+      // seek
+      rngSeek.addEventListener("mouseenter", () => wrapper.classList.add("show-seek-thumb"));
+      rngSeek.addEventListener("mouseleave", () => { if (!scrubbing) wrapper.classList.remove("show-seek-thumb"); });
+
+      rngSeek.addEventListener("pointerdown", (e) => {
+        e.stopPropagation();
+        scrubbing = true;
+        wrapper.classList.add("show-seek-thumb");
+        showControls();
+      });
+      rngSeek.addEventListener("pointerup", (e) => {
+        e.stopPropagation();
+        scrubbing = false;
+        setTimeout(() => wrapper.classList.remove("show-seek-thumb"), 160);
+        showControls();
+      });
+
+      rngSeek.addEventListener("input", (e) => {
+        e.stopPropagation();
+        const dur = Number.isFinite(video.duration) ? video.duration : 0;
+        const pct = Number(rngSeek.value) / 1000;
+        if (dur > 0) video.currentTime = Math.max(0, Math.min(dur, pct * dur));
+        const pct2 = (Number(rngSeek.value) / 1000) * 100;
+        setSeekFill(pct2);
+        showControls();
+      });
+
+      // Desktop hover shows controls, leaving hides
+      wrapper.addEventListener("mouseenter", () => { if (isDesktopFine()) showControls(); });
+      wrapper.addEventListener("mousemove", () => { if (isDesktopFine()) showControls(); });
+      wrapper.addEventListener("mouseleave", () => { if (isDesktopFine()) hideControls(); });
+
+      // keep time/icons updated
+      video.addEventListener("loadedmetadata", () => { syncTime(); updateIcons(); syncOverlayBox(); refreshLoader(); });
+      video.addEventListener("timeupdate", () => { syncTime(); });
+      video.addEventListener("play", () => { updateIcons(); refreshLoader(); });
+      video.addEventListener("pause", () => { updateIcons(); showControls(); requestLoader(false); });
+      video.addEventListener("ended", () => { updateIcons(); showControls(); requestLoader(false); });
+      video.addEventListener("volumechange", () => { setVolUI(getEffectiveVol()); updateIcons(); });
+      video.addEventListener("seeking", refreshLoader);
+      video.addEventListener("seeked", refreshLoader);
+
+      // buffering-related events
+      video.addEventListener("waiting", () => requestLoader(true));
+      video.addEventListener("stalled", () => requestLoader(true));
+      video.addEventListener("canplay", () => requestLoader(false));
+      video.addEventListener("canplaythrough", () => requestLoader(false));
+      video.addEventListener("playing", () => requestLoader(false));
+      video.addEventListener("error", () => requestLoader(false));
+
+      video.addEventListener("webkitbeginfullscreen", () => { setTimeout(() => { updateIcons(); syncOverlayBox(); }, 50); });
+      video.addEventListener("webkitendfullscreen", () => { setTimeout(() => { updateIcons(); syncOverlayBox(); }, 50); });
+
+      const fsHandler = () => { updateIcons(); syncOverlayBox(); };
+      document.addEventListener("fullscreenchange", fsHandler);
+      document.addEventListener("webkitfullscreenchange", fsHandler);
+
+      wrapper.__xpCleanup = () => {
+        if (volTimer) clearTimeout(volTimer);
+        if (loaderTimer) clearTimeout(loaderTimer);
+        loaderTimer = null;
+        loaderWanted = false;
+
+        if (rafId) cancelAnimationFrame(rafId);
+        rafId = 0;
+
+        document.removeEventListener("fullscreenchange", fsHandler);
+        document.removeEventListener("webkitfullscreenchange", fsHandler);
+        if (ro) { try { ro.disconnect(); } catch (e) { } }
+      };
+    }
+
+    // ==========================
+    // Viewer logic
+    // ==========================
+    const viewerOverlay = document.getElementById("viewerOverlay");
+    const viewerStage = viewerOverlay.querySelector(".viewer-stage");
+    const viewerTrack = document.getElementById("viewerTrack");
+    const viewerViewport = document.getElementById("viewerViewport");
+    const viewerClose = document.getElementById("viewerClose");
+    const viewerPrev = document.getElementById("viewerPrev");
+    const viewerNext = document.getElementById("viewerNext");
+
+    const vcTitle = document.getElementById("vcTitle");
+    const vcCaption = document.getElementById("vcCaption");
+    const vcCount = document.getElementById("vcCount");
+    const viewerCaptionBar = document.getElementById("viewerCaptionBar");
+    const viewerLayout = document.getElementById("viewerLayout");
+
+    let viewerIndex = 0;
+    let viewerOpen = false;
+
+    // (MOBILE ONLY) swipe/close drag state
+    let dragActive = false;
+    let dragAxis = null; // 'x' or 'y'
+    let startX = 0, startY = 0;
+    let lastX = 0, lastY = 0;
+    let baseTranslate = 0;
+    let moved = false;
+
+    let prevUiHidden = false;
+
+    // Mobile-only Twitter-like image zoom state
+    const zoomStates = new Map(); // idx -> { s, tx, ty }
+    const zoomPointers = new Map(); // pointerId -> {x,y}
+    let pinchActive = false;
+    let panActive = false;
+    let pinchStart = null;
+    let panStart = null;
+
+    // pan candidate so a single tap can reset zoom (Twitter-like)
+    let panCandidate = null; // { pid, x, y, t0, tx0, ty0 }
+    const MOBILE_TAP_MAX_MS = 260;
+    const MOBILE_TAP_SLOP = 7;
+
+    // Desktop pan (ONLY for zoomed image panning; NOT for navigation)
+    let dPan = null; // { pid, x, y, tx0, ty0, moved, captured }
+    const DESKTOP_ZOOM_TOGGLE = 2.6;
+
+    // zoom feel
+    const MOBILE_PINCH_SENS = 1.35;
+    const SNAP_TO_1 = 1.06;
+    const DESKTOP_PAN_SLOP = 4;
+
+    // ==========================================================
+    //  Mobile double-tap to zoom (images only)
+    // ==========================================================
+    let swipeStartT = 0;
+    let swipeStartOnImageStage = false;
+
+    let lastTap = { t: 0, x: 0, y: 0, idx: -1 };
+    const DOUBLE_TAP_MS = 320;
+    const DOUBLE_TAP_DIST = 24;
+    const MOBILE_DOUBLE_TAP_ZOOM = 2.6;
+
+    function setNoScroll(on) {
+      document.body.classList.toggle("no-scroll", !!on);
+    }
+
+    function clampIndex(idx) {
+      const len = items.length;
+      if (!len) return 0;
+      return Math.max(0, Math.min(len - 1, idx));
+    }
+
+    function viewportWidth() {
+      return Math.round(viewerViewport.getBoundingClientRect().width || window.innerWidth);
+    }
+
+    function setTrackTranslate(px, animate = true) {
+      const snapped = Math.round(px);
+      if (animate) viewerTrack.classList.remove("dragging");
+      else viewerTrack.classList.add("dragging");
+      viewerTrack.style.transform = `translate3d(${snapped}px,0,0)`;
+    }
+
+    function getActiveSlide() {
+      return viewerTrack.children[viewerIndex] || null;
+    }
+    function activeItem() {
+      return items[viewerIndex] || null;
+    }
+    function activeIsImage() {
+      const it = activeItem();
+      return !!(it && !it.isVideo);
+    }
+
+    function getZoomState(idx) {
+      if (!zoomStates.has(idx)) zoomStates.set(idx, { s: 1, tx: 0, ty: 0 });
+      return zoomStates.get(idx);
+    }
+
+    function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+    function clampZoomToBounds(idx, s, tx, ty) {
+      const slide = viewerTrack.children[idx];
+      if (!slide) return { s, tx, ty };
+      const stage = slide.querySelector(".zoom-stage");
+      if (!stage) return { s, tx, ty };
+
+      const w = stage.clientWidth || 1;
+      const h = stage.clientHeight || 1;
+
+      const maxX = ((s - 1) * w) / 2;
+      const maxY = ((s - 1) * h) / 2;
+
+      const ntx = clamp(tx, -maxX, maxX);
+      const nty = clamp(ty, -maxY, maxY);
+      return { s, tx: ntx, ty: nty };
+    }
+
+    function setDesktopZoomedClass(on) {
+      if (isMobileLike()) return;
+      viewerOverlay.classList.toggle("desktop-zoomed", !!on);
+    }
+
+    function isDesktopZoomedNow() {
+      if (isMobileLike()) return false;
+      if (!viewerOpen || !activeIsImage()) return false;
+      const st = getZoomState(viewerIndex);
+      return st.s > 1.01;
+    }
+
+    function applyZoom(idx) {
+      const slide = viewerTrack.children[idx];
+      if (!slide) return;
+      const img = slide.querySelector(".zoom-img");
+      if (!img) return;
+
+      const st = getZoomState(idx);
+      const bounded = clampZoomToBounds(idx, st.s, st.tx, st.ty);
+      st.s = bounded.s; st.tx = bounded.tx; st.ty = bounded.ty;
+
+      const atRest = (st.s <= 1.001) && (Math.abs(st.tx) <= 0.5) && (Math.abs(st.ty) <= 0.5);
+      if (atRest) {
+        img.style.transform = `translate3d(-50%,-50%,0)`;
+      } else {
+        img.style.transform = `translate3d(-50%,-50%,0) translate3d(${st.tx}px, ${st.ty}px, 0) scale3d(${st.s}, ${st.s}, 1)`;
+      }
+
+      if (!isMobileLike() && viewerOpen && idx === viewerIndex) {
+        setDesktopZoomedClass(st.s > 1.01);
+      }
+    }
+
+    function resetZoom(idx) {
+      if (idx == null) return;
+      const it = items[idx];
+      if (!it || it.isVideo) return;
+      zoomStates.set(idx, { s: 1, tx: 0, ty: 0 });
+      applyZoom(idx);
+    }
+
+    function zoomInDesktopAt(clientX, clientY) {
+      if (!isDesktopFine()) return;
+      if (!viewerOpen || !activeIsImage()) return;
+
+      const slide = getActiveSlide();
+      const stage = slide ? slide.querySelector(".zoom-stage") : null;
+      if (!stage) return;
+
+      const rect = stage.getBoundingClientRect();
+      const ax = clientX - rect.left;
+      const ay = clientY - rect.top;
+
+      const cx = rect.width / 2;
+      const cy = rect.height / 2;
+
+      const st = getZoomState(viewerIndex);
+      const s0 = st.s;
+      const s1 = DESKTOP_ZOOM_TOGGLE;
+
+      const ux = ((ax - cx) - st.tx) / s0 + cx;
+      const uy = ((ay - cy) - st.ty) / s0 + cy;
+
+      let tx = (ax - cx) - s1 * (ux - cx);
+      let ty = (ay - cy) - s1 * (uy - cy);
+
+      const bounded = clampZoomToBounds(viewerIndex, s1, tx, ty);
+      st.s = bounded.s;
+      st.tx = bounded.tx;
+      st.ty = bounded.ty;
+
+      applyZoom(viewerIndex);
+      setDesktopZoomedClass(true);
+    }
+
+    function zoomOutDesktop() {
+      if (!isDesktopFine()) return;
+      if (!viewerOpen || !activeIsImage()) return;
+
+      resetZoom(viewerIndex);
+      setDesktopZoomedClass(false);
+    }
+
+    function toggleDesktopZoomAt(clientX, clientY) {
+      if (!isDesktopFine()) return;
+      if (!viewerOpen || !activeIsImage()) return;
+
+      if (isDesktopZoomedNow()) zoomOutDesktop();
+      else zoomInDesktopAt(clientX, clientY);
+    }
+
+    // mobile zoom-in at tap point (for double-tap)
+    function zoomInMobileAt(clientX, clientY) {
+      if (!isMobileLike()) return;
+      if (!viewerOpen || !activeIsImage()) return;
+
+      const slide = getActiveSlide();
+      const stage = slide ? slide.querySelector(".zoom-stage") : null;
+      if (!stage) return;
+
+      const rect = stage.getBoundingClientRect();
+      const ax = clientX - rect.left;
+      const ay = clientY - rect.top;
+
+      const cx = rect.width / 2;
+      const cy = rect.height / 2;
+
+      const st = getZoomState(viewerIndex);
+      const s0 = st.s;
+      const s1 = MOBILE_DOUBLE_TAP_ZOOM;
+
+      const ux = ((ax - cx) - st.tx) / s0 + cx;
+      const uy = ((ay - cy) - st.ty) / s0 + cy;
+
+      let tx = (ax - cx) - s1 * (ux - cx);
+      let ty = (ay - cy) - s1 * (uy - cy);
+
+      const bounded = clampZoomToBounds(viewerIndex, s1, tx, ty);
+      st.s = bounded.s;
+      st.tx = bounded.tx;
+      st.ty = bounded.ty;
+
+      applyZoom(viewerIndex);
+      setMobileZoomed(true);
+    }
+
+    function getActiveVideo() {
+      const slide = viewerTrack.children[viewerIndex];
+      return slide ? (slide.querySelector("video") || null) : null;
+    }
+
+    function autoplayActiveVideo() {
+      const v = getActiveVideo();
+      if (!v) return;
+      v.muted = true;
+      try { v.currentTime = v.currentTime || 0; } catch (e) { }
+      v.play().catch(() => { });
+    }
+
+    function syncCaptionHeightVar() {
+      if (!viewerOpen || !viewerCaptionBar || !viewerLayout) return;
+
+      viewerLayout.classList.add("has-capheight");
+
+      if (isMobileLike()) {
+        document.documentElement.style.setProperty("--cap-h", "var(--mobile-cap-collapsed)");
+        return;
+      }
+
+      const h = Math.ceil(viewerCaptionBar.getBoundingClientRect().height || 0);
+      document.documentElement.style.setProperty("--cap-h", h + "px");
+    }
+
+    function setMobileZoomed(on) {
+      if (!isMobileLike()) return;
+      const wasZoomed = viewerOverlay.classList.contains("zoomed");
+
+      if (on) {
+        viewerOverlay.classList.add("zoomed");
+        viewerOverlay.classList.add("ui-hidden");
+      } else {
+        viewerOverlay.classList.remove("zoomed");
+        if (wasZoomed) {
+          viewerOverlay.classList.remove("ui-hidden");
+        }
+        requestAnimationFrame(syncCaptionHeightVar);
+        setTimeout(syncCaptionHeightVar, 60);
+      }
+    }
+
+    function bindDesktopStageClickToZoom() {
+      const stages = viewerTrack.querySelectorAll(".zoom-stage");
+      stages.forEach(stage => {
+        if (stage.__zoomClickBound) return;
+        stage.__zoomClickBound = true;
+
+        stage.addEventListener("click", (e) => {
+          if (!viewerOpen) return;
+          if (!isDesktopFine()) return;
+          if (!activeIsImage()) return;
+          if (tapsSuppressed()) return;
+
+          if (e.target.closest("button")) return;
+          if (e.target.closest("#viewerCaptionBar")) return;
+          if (e.target.closest(".xplayer")) return;
+
+          safeStop(e);
+          toggleDesktopZoomAt(e.clientX, e.clientY);
+        }, true);
+      });
+    }
+
+    function renderViewerTrack() {
+      viewerTrack.innerHTML = "";
+
+      items.forEach((it, idx) => {
+        const slide = document.createElement("div");
+        slide.className = "viewer-slide";
+        slide.dataset.index = String(idx);
+
+        if (it.isVideo) {
+          const wrap = document.createElement("div");
+          wrap.className = "xplayer";
+
+          const v = document.createElement("video");
+          v.src = it.src;
+          v.playsInline = true;
+          v.setAttribute("aria-label", it.alt);
+          v.controls = false;
+
+          v.muted = true;
+          v.setAttribute("muted", "");
+          v.setAttribute("playsinline", "");
+
+          wrap.appendChild(v);
+          slide.appendChild(wrap);
+
+          initXPlayer(wrap, v);
+        } else {
+          const stage = document.createElement("div");
+          stage.className = "zoom-stage";
+          stage.setAttribute("aria-label", "Image");
+
+          const img = document.createElement("img");
+          img.className = "zoom-img";
+          img.src = it.src;
+          img.alt = it.alt;
+          img.draggable = false;
+
+          stage.appendChild(img);
+          slide.appendChild(stage);
+
+          zoomStates.set(idx, { s: 1, tx: 0, ty: 0 });
+        }
+
+        viewerTrack.appendChild(slide);
+      });
+
+      bindDesktopStageClickToZoom();
+    }
+
+    function syncActiveVideoUI() {
+      if (!viewerOpen) return;
+      const slide = getActiveSlide();
+      if (!slide) return;
+      const wrap = slide.querySelector(".xplayer");
+      if (!wrap) return;
+
+      if (viewerOverlay.classList.contains("ui-hidden")) {
+        wrap.classList.add("hide-ui");
+        wrap.classList.remove("vol-open");
+      } else {
+        wrap.classList.remove("hide-ui");
+      }
+    }
+
+    function updateCaptionBar() {
+      const it = items[viewerIndex];
+
+      const t = it ? (it.alt || "") : "";
+      const c = it ? (it.caption || "") : "";
+
+      vcTitle.textContent = t || "Media";
+
+      const caption = (c || "").trim();
+      if (caption) {
+        vcCaption.textContent = caption;
+        vcCaption.style.display = "";
+        try { vcCaption.scrollTop = 0; } catch (e) { }
+      } else {
+        vcCaption.textContent = "";
+        vcCaption.style.display = "none";
+      }
+
+      const cur = items.length ? (viewerIndex + 1) : 0;
+      const tot = items.length ? items.length : 0;
+      vcCount.innerHTML = `
+        <div class="vc-count-top">${cur} of</div>
+        <div class="vc-count-big">${tot}</div>
+      `;
+
+      if (items.length <= 1) {
+        viewerPrev.setAttribute("disabled", "");
+        viewerNext.setAttribute("disabled", "");
+      } else {
+        if (viewerIndex === 0) viewerPrev.setAttribute("disabled", "");
+        else viewerPrev.removeAttribute("disabled");
+
+        if (viewerIndex === items.length - 1) viewerNext.setAttribute("disabled", "");
+        else viewerNext.removeAttribute("disabled");
+      }
+
+      viewerTrack.querySelectorAll("video").forEach((v, idx) => {
+        if (idx !== viewerIndex) { try { v.pause(); } catch (e) { } }
+      });
+
+      resetZoom(viewerIndex);
+      if (isMobileLike()) setMobileZoomed(false);
+      if (!isMobileLike()) setDesktopZoomedClass(false);
+
+      panCandidate = null;
+
+      autoplayActiveVideo();
+
+      requestAnimationFrame(syncCaptionHeightVar);
+      setTimeout(syncCaptionHeightVar, 60);
+
+      syncActiveVideoUI();
+    }
+
+    function snapToIndex(idx, animate = true) {
+      if (!items.length) return;
+
+      const prev = viewerIndex;
+      viewerIndex = clampIndex(idx);
+
+      if (isMobileLike() && prev !== viewerIndex) {
+        resetZoom(prev);
+        resetZoom(viewerIndex);
+
+        zoomPointers.clear();
+        pinchActive = false;
+        panActive = false;
+        pinchStart = null;
+        panStart = null;
+        panCandidate = null;
+
+        setMobileZoomed(false);
+      }
+
+      if (!isMobileLike() && prev !== viewerIndex) {
+        resetZoom(prev);
+        resetZoom(viewerIndex);
+        setDesktopZoomedClass(false);
+        dPan = null;
+      }
+
+      const w = viewportWidth();
+      setTrackTranslate(-viewerIndex * w, animate);
+      updateCaptionBar();
+    }
+
+    function openViewerAt(idx) {
+      if (!items.length) return;
+
+      if (!viewerTrack.children.length) renderViewerTrack();
+
+      viewerOpen = true;
+      viewerOverlay.classList.add("active");
+      viewerOverlay.classList.remove("ui-hidden");
+      viewerOverlay.classList.remove("zoomed");
+      viewerOverlay.classList.remove("desktop-zoomed");
+      viewerOverlay.setAttribute("aria-hidden", "false");
+      setNoScroll(true);
+
+      viewerStage.style.transform = "";
+      viewerStage.classList.remove("dragging-down");
+
+      zoomPointers.clear();
+      pinchActive = false;
+      panActive = false;
+      pinchStart = null;
+      panStart = null;
+      panCandidate = null;
+
+      dPan = null;
+      setDesktopZoomedClass(false);
+
+      requestAnimationFrame(() => {
+        snapToIndex(idx, false);
+        autoplayActiveVideo();
+        syncCaptionHeightVar();
+        syncActiveVideoUI();
+      });
+    }
+
+    function closeViewer() {
+      viewerOpen = false;
+      viewerOverlay.classList.remove("active");
+      viewerOverlay.classList.remove("ui-hidden");
+      viewerOverlay.classList.remove("zoomed");
+      viewerOverlay.classList.remove("desktop-zoomed");
+      viewerOverlay.setAttribute("aria-hidden", "true");
+
+      viewerStage.style.transform = "";
+      viewerStage.classList.remove("dragging-down");
+
+      zoomPointers.clear();
+      pinchActive = false;
+      panActive = false;
+      pinchStart = null;
+      panStart = null;
+      panCandidate = null;
+
+      dPan = null;
+      setDesktopZoomedClass(false);
+
+      viewerTrack.querySelectorAll(".xplayer").forEach(w => { if (w.__xpCleanup) try { w.__xpCleanup(); } catch (e) { } });
+      viewerTrack.querySelectorAll("video").forEach(v => { try { v.pause(); } catch (e) { } });
+
+      setNoScroll(false);
+      document.documentElement.style.removeProperty("--cap-h");
+      if (viewerLayout) viewerLayout.classList.remove("has-capheight");
+    }
+
+    function prevMedia() {
+      if (viewerIndex <= 0) return;
+      snapToIndex(viewerIndex - 1, true);
+    }
+    function nextMedia() {
+      if (viewerIndex >= items.length - 1) return;
+      snapToIndex(viewerIndex + 1, true);
+    }
+
+    viewerClose.addEventListener("click", (e) => { e.preventDefault(); e.stopPropagation(); closeViewer(); });
+    viewerPrev.addEventListener("click", (e) => { e.preventDefault(); e.stopPropagation(); prevMedia(); });
+    viewerNext.addEventListener("click", (e) => { e.preventDefault(); e.stopPropagation(); nextMedia(); });
+
+    document.addEventListener("keydown", (e) => {
+      if (!viewerOpen) return;
+
+      if (isDesktopFine() && isDesktopZoomedNow() && e.key === "Escape") {
+        e.preventDefault();
+        zoomOutDesktop();
+        return;
+      }
+
+      if (e.key === "Escape") closeViewer();
+      if (e.key === "ArrowLeft") prevMedia();
+      if (e.key === "ArrowRight") nextMedia();
+    });
+
+    window.addEventListener("resize", () => {
+      if (!viewerOpen) return;
+      syncCaptionHeightVar();
+      snapToIndex(viewerIndex, false);
+      if (activeIsImage()) applyZoom(viewerIndex);
+    }, { passive: true });
+
+    // ==========================
+    // MOBILE swipe helpers (only used on mobile)
+    // ==========================
+    function startSwipe(e) {
+      dragActive = true;
+      dragAxis = null;
+      moved = false;
+
+      startX = e.clientX;
+      startY = e.clientY;
+      lastX = e.clientX;
+      lastY = e.clientY;
+
+      // capture tap timing + whether this started on an image stage
+      swipeStartT = Date.now();
+      swipeStartOnImageStage = !!(activeIsImage() && e.target && e.target.closest && e.target.closest(".zoom-stage"));
+
+      prevUiHidden = viewerOverlay.classList.contains("ui-hidden");
+
+      const w = viewportWidth();
+      baseTranslate = -viewerIndex * w;
+
+      setTrackTranslate(baseTranslate, false);
+
+      try { viewerViewport.setPointerCapture(e.pointerId); } catch (err) { }
+    }
+
+    function cancelSwipe() {
+      dragActive = false;
+      dragAxis = null;
+      moved = false;
+      viewerStage.style.transform = "";
+      viewerStage.classList.remove("dragging-down");
+      setTrackTranslate(-viewerIndex * viewportWidth(), true);
+    }
+
+    function dist(a, b) {
+      const dx = a.x - b.x;
+      const dy = a.y - b.y;
+      return Math.hypot(dx, dy);
+    }
+    function midpoint(a, b) {
+      return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+    }
+
+    function startPanFromCandidate(e) {
+      if (!panCandidate) return;
+      panActive = true;
+      panStart = { x: panCandidate.x, y: panCandidate.y, tx0: panCandidate.tx0, ty0: panCandidate.ty0 };
+      try { viewerViewport.setPointerCapture(e.pointerId); } catch (err) { }
+    }
+
+    function startPinchMobile() {
+      pinchActive = true;
+      panActive = false;
+      panStart = null;
+      panCandidate = null;
+
+      setMobileZoomed(true);
+
+      const pts = Array.from(zoomPointers.values());
+      const a = pts[0], b = pts[1];
+
+      const stage = getActiveSlide() ? getActiveSlide().querySelector(".zoom-stage") : null;
+      const rect = stage ? stage.getBoundingClientRect() : { left: 0, top: 0, width: 1, height: 1 };
+
+      const st = getZoomState(viewerIndex);
+      const mid = midpoint(a, b);
+
+      const midStage = { x: mid.x - rect.left, y: mid.y - rect.top };
+      const cx = rect.width / 2;
+      const cy = rect.height / 2;
+
+      const ux = ((midStage.x - cx) - st.tx) / st.s + cx;
+      const uy = ((midStage.y - cy) - st.ty) / st.s + cy;
+
+      pinchStart = {
+        dist: dist(a, b),
+        s0: st.s,
+        ux, uy,
+        rect
+      };
+
+      cancelSwipe();
+      suppressTaps(420);
+    }
+
+    function beginDesktopPan(e) {
+      if (!isDesktopFine()) return;
+      if (!activeIsImage()) return;
+      if (!isDesktopZoomedNow()) return;
+
+      const st = getZoomState(viewerIndex);
+
+      dPan = {
+        pid: e.pointerId,
+        x: e.clientX,
+        y: e.clientY,
+        tx0: st.tx,
+        ty0: st.ty,
+        moved: false,
+        captured: false
+      };
+    }
+
+    function moveDesktopPan(e) {
+      if (!dPan || dPan.pid !== e.pointerId) return;
+
+      const dx = e.clientX - dPan.x;
+      const dy = e.clientY - dPan.y;
+
+      if (!dPan.moved && (Math.abs(dx) > DESKTOP_PAN_SLOP || Math.abs(dy) > DESKTOP_PAN_SLOP)) {
+        dPan.moved = true;
+        if (!dPan.captured) {
+          try { viewerViewport.setPointerCapture(e.pointerId); dPan.captured = true; } catch (err) { }
+        }
+      }
+
+      if (!dPan.moved) return;
+
+      const st = getZoomState(viewerIndex);
+      let tx = dPan.tx0 + dx;
+      let ty = dPan.ty0 + dy;
+
+      const bounded = clampZoomToBounds(viewerIndex, st.s, tx, ty);
+      st.tx = bounded.tx; st.ty = bounded.ty;
+      applyZoom(viewerIndex);
+    }
+
+    function endDesktopPan(e) {
+      if (!dPan || dPan.pid !== e.pointerId) return;
+
+      const movedPan = !!dPan.moved;
+      dPan = null;
+
+      if (movedPan) {
+        suppressTaps(220);
+      }
+    }
+
+    function pointerDown(e) {
+      if (!viewerOpen) return;
+
+      if (isDesktopFine()) {
+        if (activeIsImage() && e.target.closest(".zoom-stage") && isDesktopZoomedNow()) {
+          beginDesktopPan(e);
+        }
+        return;
+      }
+
+      if (!isMobileLike()) return;
+
+      if (!e.target || e.target.closest("button")) return;
+      if (e.target.closest("#viewerCaptionBar")) return;
+
+      if (e.target.closest(".xp-controls")) return;
+      if (e.target.closest(".xp-volpop")) return;
+      if (e.target.closest(".xp-volslider")) return;
+
+      if (activeIsImage() && e.target.closest(".zoom-stage")) {
+        zoomPointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+        const st = getZoomState(viewerIndex);
+
+        if (zoomPointers.size === 2) {
+          panCandidate = null;
+          startPinchMobile();
+          return;
+        }
+
+        if (st.s > 1.001) {
+          setMobileZoomed(true);
+          panCandidate = {
+            pid: e.pointerId,
+            x: e.clientX,
+            y: e.clientY,
+            t0: Date.now(),
+            tx0: st.tx,
+            ty0: st.ty
+          };
+          panActive = false;
+          panStart = null;
+          try { viewerViewport.setPointerCapture(e.pointerId); } catch (err) { }
+          return;
+        }
+
+        startSwipe(e);
+        return;
+      }
+
+      startSwipe(e);
+    }
+
+    function pointerMove(e) {
+      if (isDesktopFine()) {
+        if (dPan && dPan.pid === e.pointerId) {
+          moveDesktopPan(e);
+          if (dPan && dPan.moved) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+        }
+        return;
+      }
+
+      if (!isMobileLike()) return;
+
+      if (activeIsImage()) {
+        if (zoomPointers.has(e.pointerId)) {
+          zoomPointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+        }
+
+        if (panCandidate && panCandidate.pid === e.pointerId && !pinchActive && !panActive) {
+          const dx0 = e.clientX - panCandidate.x;
+          const dy0 = e.clientY - panCandidate.y;
+          if (Math.abs(dx0) > MOBILE_TAP_SLOP || Math.abs(dy0) > MOBILE_TAP_SLOP) {
+            startPanFromCandidate(e);
+          } else {
+            return;
+          }
+        }
+
+        if (pinchActive && zoomPointers.size >= 2 && pinchStart) {
+          const pts = Array.from(zoomPointers.values());
+          const a = pts[0], b = pts[1];
+          const newDist = dist(a, b);
+          const ratio = (pinchStart.dist > 0) ? (newDist / pinchStart.dist) : 1;
+
+          const boosted = Math.pow(ratio, MOBILE_PINCH_SENS);
+          let newS = clamp(pinchStart.s0 * boosted, 1, 4.25);
+
+          const slide = getActiveSlide();
+          const stage = slide ? slide.querySelector(".zoom-stage") : null;
+          const rect = stage ? stage.getBoundingClientRect() : pinchStart.rect;
+          const mid = midpoint(a, b);
+
+          const midStage = { x: mid.x - rect.left, y: mid.y - rect.top };
+          const cx = rect.width / 2;
+          const cy = rect.height / 2;
+
+          const ux = pinchStart.ux;
+          const uy = pinchStart.uy;
+
+          let tx = (midStage.x - cx) - newS * (ux - cx);
+          let ty = (midStage.y - cy) - newS * (uy - cy);
+
+          if (newS <= SNAP_TO_1) {
+            newS = 1; tx = 0; ty = 0;
+          }
+
+          const bounded = clampZoomToBounds(viewerIndex, newS, tx, ty);
+          const st = getZoomState(viewerIndex);
+          st.s = bounded.s; st.tx = bounded.tx; st.ty = bounded.ty;
+          applyZoom(viewerIndex);
+
+          suppressTaps(420);
+          return;
+        }
+
+        if (panActive && panStart) {
+          const st = getZoomState(viewerIndex);
+          const dx = e.clientX - panStart.x;
+          const dy = e.clientY - panStart.y;
+
+          let tx = panStart.tx0 + dx;
+          let ty = panStart.ty0 + dy;
+
+          const bounded = clampZoomToBounds(viewerIndex, st.s, tx, ty);
+          st.tx = bounded.tx; st.ty = bounded.ty;
+          applyZoom(viewerIndex);
+
+          suppressTaps(420);
+          return;
+        }
+      }
+
+      if (!dragActive) return;
+
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+      lastX = e.clientX;
+      lastY = e.clientY;
+
+      if (!dragAxis) {
+        const ax = Math.abs(dx);
+        const ay = Math.abs(dy);
+        if (ax > 10 || ay > 10) {
+          dragAxis = (ay > ax * 1.15) ? "y" : "x";
+          if (dragAxis === "y") {
+            viewerOverlay.classList.add("ui-hidden");
+            viewerStage.classList.add("dragging-down");
+            syncActiveVideoUI();
+          }
+        } else {
+          return;
+        }
+      }
+
+      if (activeIsImage()) {
+        const st = getZoomState(viewerIndex);
+        if (st.s > 1.001) return;
+      }
+
+      if (dragAxis === "y") {
+        const down = Math.max(0, dy);
+        if (down > 6) moved = true;
+        viewerStage.style.transform = `translate3d(0, ${Math.min(320, down)}px, 0)`;
+        return;
+      }
+
+      if (Math.abs(dx) > 6) moved = true;
+
+      const w = viewportWidth();
+      let next = baseTranslate + dx;
+
+      const minX = -(items.length - 1) * w;
+      const maxX = 0;
+
+      if (next > maxX) next = maxX + (next - maxX) * 0.35;
+      if (next < minX) next = minX + (next - minX) * 0.35;
+
+      setTrackTranslate(next, false);
+    }
+
+    function pointerUp(e) {
+      if (isDesktopFine()) {
+        if (dPan && dPan.pid === e.pointerId) {
+          const movedPan = !!dPan.moved;
+          if (movedPan) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+          endDesktopPan(e);
+        }
+        return;
+      }
+
+      if (!isMobileLike()) return;
+
+      if (activeIsImage() && panCandidate && panCandidate.pid === e.pointerId && !pinchActive && !panActive) {
+        const dt = Date.now() - panCandidate.t0;
+        const dx = e.clientX - panCandidate.x;
+        const dy = e.clientY - panCandidate.y;
+        const isTap = (dt <= MOBILE_TAP_MAX_MS) && (Math.hypot(dx, dy) <= MOBILE_TAP_SLOP);
+
+        panCandidate = null;
+        if (zoomPointers.has(e.pointerId)) zoomPointers.delete(e.pointerId);
+
+        if (isTap) {
+          resetZoom(viewerIndex);
+          setMobileZoomed(false);
+          zoomPointers.clear();
+          pinchActive = false;
+          panActive = false;
+          pinchStart = null;
+          panStart = null;
+          suppressTaps(220);
+          return;
+        }
+      }
+
+      if (activeIsImage()) {
+        if (zoomPointers.has(e.pointerId)) zoomPointers.delete(e.pointerId);
+
+        if (pinchActive) {
+          if (zoomPointers.size < 2) {
+            pinchActive = false;
+            pinchStart = null;
+            const st = getZoomState(viewerIndex);
+            if (st.s <= 1.001) {
+              resetZoom(viewerIndex);
+              setMobileZoomed(false);
+            } else {
+              setMobileZoomed(true);
+            }
+            suppressTaps(420);
+            return;
+          }
+          suppressTaps(420);
+          return;
+        }
+
+        if (panActive) {
+          const st = getZoomState(viewerIndex);
+          if (zoomPointers.size === 0) {
+            panActive = false;
+            panStart = null;
+            panCandidate = null;
+            if (st.s <= 1.001) {
+              resetZoom(viewerIndex);
+              setMobileZoomed(false);
+            } else {
+              setMobileZoomed(true);
+            }
+          }
+          suppressTaps(420);
+          return;
+        }
+      }
+
+      if (!dragActive) return;
+      dragActive = false;
+
+      const dx = lastX - startX;
+      const dy = lastY - startY;
+
+      // detect a clean tap on an image, and if it's a double-tap -> zoom in
+      if (swipeStartOnImageStage && activeIsImage() && !moved && !dragAxis) {
+        const dtTap = Date.now() - swipeStartT;
+        const tapDist = Math.hypot(dx, dy);
+        const isTap = (dtTap <= MOBILE_TAP_MAX_MS) && (tapDist <= MOBILE_TAP_SLOP);
+
+        if (isTap) {
+          const now = Date.now();
+          const sameIdx = (lastTap.idx === viewerIndex);
+          const withinTime = (now - lastTap.t) <= DOUBLE_TAP_MS;
+          const withinDist = Math.hypot(e.clientX - lastTap.x, e.clientY - lastTap.y) <= DOUBLE_TAP_DIST;
+
+          if (sameIdx && withinTime && withinDist) {
+            // Double-tap -> zoom in at the tap point (mobile images only)
+            lastTap = { t: 0, x: 0, y: 0, idx: -1 };
+
+            // ensure track is snapped, then zoom
+            setTrackTranslate(-viewerIndex * viewportWidth(), true);
+            zoomInMobileAt(e.clientX, e.clientY);
+
+            suppressTaps(520); // prevent overlay click toggling UI on this gesture
+            return;
+          } else {
+            // store first tap for possible double-tap
+            lastTap = { t: now, x: e.clientX, y: e.clientY, idx: viewerIndex };
+          }
+        }
+      }
+
+      if (moved) suppressTaps(420);
+
+      if (dragAxis === "y") {
+        const down = Math.max(0, dy);
+        const closeThreshold = Math.max(110, window.innerHeight * 0.16);
+
+        viewerStage.classList.remove("dragging-down");
+
+        if (down > closeThreshold) {
+          closeViewer();
+          suppressTaps(520);
+        } else {
+          viewerStage.style.transform = "";
+          if (prevUiHidden) viewerOverlay.classList.add("ui-hidden");
+          else viewerOverlay.classList.remove("ui-hidden");
+          syncActiveVideoUI();
+        }
+
+        dragAxis = null;
+        moved = false;
+        return;
+      }
+
+      const w = viewportWidth();
+      const abs = Math.abs(dx);
+      const threshold = Math.max(50, w * 0.16);
+
+      if (items.length > 1 && abs > threshold) {
+        if (dx < 0) nextMedia();
+        else prevMedia();
+      } else {
+        snapToIndex(viewerIndex, true);
+      }
+
+      dragAxis = null;
+      moved = false;
+    }
+
+    viewerViewport.addEventListener("pointerdown", pointerDown);
+    viewerViewport.addEventListener("pointermove", pointerMove);
+    viewerViewport.addEventListener("pointerup", pointerUp);
+    viewerViewport.addEventListener("pointercancel", pointerUp);
+
+    /* ==========================================================
+       DESKTOP TRACKPAD PINCH ZOOM (Ctrl/Meta + wheel)
+    ========================================================== */
+    viewerViewport.addEventListener("wheel", (e) => {
+      if (!viewerOpen) return;
+      if (!isDesktopFine()) return;
+      if (!activeIsImage()) return;
+      if (!e.target.closest(".zoom-stage")) return;
+      if (!e.ctrlKey && !e.metaKey) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+
+      const slide = getActiveSlide();
+      const stage = slide ? slide.querySelector(".zoom-stage") : null;
+      if (!stage) return;
+
+      const rect = stage.getBoundingClientRect();
+      const ax = e.clientX - rect.left;
+      const ay = e.clientY - rect.top;
+      const cx = rect.width / 2;
+      const cy = rect.height / 2;
+
+      const st = getZoomState(viewerIndex);
+      const s0 = st.s;
+
+      const k = 0.0038;
+      const factor = Math.exp(-e.deltaY * k);
+      let s1 = clamp(s0 * factor, 1, 4.25);
+
+      const ux = ((ax - cx) - st.tx) / s0 + cx;
+      const uy = ((ay - cy) - st.ty) / s0 + cy;
+
+      let tx = (ax - cx) - s1 * (ux - cx);
+      let ty = (ay - cy) - s1 * (uy - cy);
+
+      if (s1 <= 1.06) {
+        s1 = 1; tx = 0; ty = 0;
+      }
+
+      const bounded = clampZoomToBounds(viewerIndex, s1, tx, ty);
+      st.s = bounded.s; st.tx = bounded.tx; st.ty = bounded.ty;
+
+      applyZoom(viewerIndex);
+      suppressTaps(180);
+    }, { passive: false });
+
+    // Tap screen toggles UI on mobile for BOTH images and videos (Twitter-like)
+    viewerOverlay.addEventListener("click", (e) => {
+      if (!viewerOpen) return;
+      if (tapsSuppressed()) return;
+
+      if (isMobileLike()) {
+        if (e.target.closest("button")) return;
+        if (e.target.closest("#viewerCaptionBar")) return;
+        if (e.target.closest(".xp-controls")) return;
+        if (e.target.closest(".xp-volpop")) return;
+        if (e.target.closest(".xp-volslider")) return;
+
+        if (activeIsImage()) {
+          const st = getZoomState(viewerIndex);
+          if (st && st.s > 1.001) {
+            resetZoom(viewerIndex);
+            setMobileZoomed(false);
+            suppressTaps(220);
+            return;
+          }
+        }
+
+        viewerOverlay.classList.toggle("ui-hidden");
+        syncActiveVideoUI();
+        return;
+      }
+
+      if (e.target.closest("button")) return;
+      if (e.target.closest("#viewerCaptionBar")) return;
+      if (e.target.closest("#viewerViewport")) return;
+      if (e.target.closest(".xp-controls")) return;
+
+      closeViewer();
+    });
+
+    // Init grid
+    buildMediaGrid();
+  </script>
+</body>
+
+</html>

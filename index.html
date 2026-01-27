@@ -1,0 +1,1856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sean A'Hearn | Portfolio</title>
+
+  <style>
+    :root{
+      /* =======================
+         DARK MODE (BRIGHTER)
+      ======================= */
+      --bg: #13213d;
+      --bg-soft: #172a4a;
+      --card: #223456;
+
+      --text: #eef6ff;
+      --muted: #cbd8ee;
+
+      --accent: #22c55e;
+      --accent-alt: #38bdf8;
+
+      --accent-soft: rgba(56, 189, 248, 0.22);
+
+      --border: rgba(186, 204, 228, 0.55);
+      --radius: 18px;
+      --maxw: 1050px;
+
+      /* ✅ REMOVE CARD SHADOWS (project cards use this) */
+      --shadow: none;
+
+      /* === Carousel edge tuning (arrows basically on the edge) === */
+      --carousel-edge: 2px;
+      --arrow-size: 32px;
+      --arrow-gap: 6px;
+      --carousel-gap: 14px;
+
+      /* shared carousel padding */
+      --carousel-pad: calc(var(--carousel-edge) + var(--arrow-size) + var(--arrow-gap));
+
+      /* plain box base (DARK) - brighter */
+      --meta-card-bg: rgba(22, 34, 58, 0.60);
+      --meta-card-border: rgba(186, 204, 228, 0.50);
+      --meta-card-radius: 14px;
+
+      /* VERY obvious selected colours */
+      --selected-solid: #facc15;
+      --selected-text-dark: #0b1220;
+      --selected-ring: rgba(250,204,21,0.55);
+
+      /* align hero + footer with section-panel inner edges */
+      --panel-inner-x: 18px;
+
+      /* ✅ Arrow alignment source-of-truth (matches internal filter row chevrons) */
+      --filter-row-pad-x: 10px;       /* .filter-row horizontal padding */
+      --filter-row-head-pad-x: 2px;   /* .filter-row-head horizontal padding */
+      --filters-chev-right: -13px;
+
+      /* ✅ NEW: space reserved for the chevron so Clear never overlaps it
+         Increase this if you want Clear even further left. */
+      --filters-actions-pad-right: calc(var(--arrow-size) - 10px);
+
+      /* ✅ One source of truth for the global backdrop */
+      --page-backdrop:
+        radial-gradient(1100px 780px at 70% -10%, rgba(56,189,248,0.22) 0%, transparent 58%),
+        radial-gradient(950px 760px at 110% 15%, rgba(34,197,94,0.13) 0%, transparent 55%),
+        radial-gradient(900px 700px at -10% -20%, rgba(168,85,247,0.12) 0%, transparent 55%),
+        var(--bg);
+    }
+
+    body.light-mode{
+      /* =======================
+         LIGHT MODE (UPDATED)
+      ======================= */
+      --bg: #f3f4f6;         /* page base */
+      --bg-soft: #ffffff;    /* surfaces */
+      --card: #ffffff;       /* card base (white) */
+
+      --text: #020617;
+      --muted: #334155;
+
+      --accent: #16a34a;
+      --accent-alt: #0ea5e9;
+      --accent-soft: rgba(14,165,233,0.12);
+
+      /* Stronger border so cards don't blend in */
+      --border: rgba(148,163,184,0.85);
+
+      /* still no shadows (your preference) */
+      --shadow: none;
+
+      /* Filter bar looks slightly grey (standout) */
+      --meta-card-bg: #f3f4f6;      /* slate-200-ish */
+      --meta-card-border: rgba(148,163,184,0.85);
+
+      --selected-solid: #eab308;
+      --selected-text-dark: #0b1220;
+      --selected-ring: rgba(234,179,8,0.45);
+
+      /* ✅ Light backdrop equivalent */
+      --page-backdrop:
+        radial-gradient(1200px 800px at 80% -10%, rgba(56,189,248,0.12) 0%, transparent 55%),
+        radial-gradient(900px 700px at -10% -20%, rgba(168,85,247,0.10) 0%, transparent 55%),
+        #f5f7fb;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+
+    body{
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      transition: color 0.25s ease;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* ✅ One continuous, fixed backdrop for the whole page */
+    body::before{
+      content:"";
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background: var(--page-backdrop);
+      pointer-events: none;
+      transform: translateZ(0);
+    }
+
+    main.page{ flex: 1 0 auto; }
+    a{ color: inherit; text-decoration: none; }
+
+    .container{
+      width: 100%;
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    .section{ padding: 14px 0; }
+
+    .section-panel{
+      position: relative;
+      border-radius: 22px;
+      padding: 16px 18px 18px;
+
+      background:
+        radial-gradient(circle at top left, rgba(56,189,248,0.24), transparent 56%),
+        radial-gradient(circle at bottom right, rgba(34,197,94,0.14), transparent 58%),
+        rgba(20, 32, 56, 0.92);
+
+      border: 1px solid rgba(186, 204, 228, 0.55);
+      box-shadow: 0 14px 34px rgba(2,6,23,0.38);
+      overflow: hidden;
+      transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    /* ✅ Light mode panel becomes slightly grey so white cards pop */
+    body.light-mode .section-panel{
+      background:
+        radial-gradient(circle at top left, rgba(56,189,248,0.10), transparent 55%),
+        radial-gradient(circle at bottom right, rgba(34,197,94,0.07), transparent 55%),
+        #eef2f7;
+      border-color: rgba(148,163,184,0.55);
+      box-shadow: 0 16px 40px rgba(148,163,184,0.28);
+    }
+
+    .section-panel::before{
+      content:"";
+      position:absolute;
+      inset:-40%;
+      background:
+        radial-gradient(circle at 10% 0, rgba(56,189,248,0.22), transparent 58%),
+        radial-gradient(circle at 90% 100%, rgba(34,197,94,0.14), transparent 60%),
+        radial-gradient(circle at 40% 60%, rgba(168,85,247,0.10), transparent 62%);
+      opacity:0.55;
+      pointer-events:none;
+      z-index:-1;
+    }
+    body.light-mode .section-panel::before{ opacity: 0.35; }
+
+    .section-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-end;
+      gap:10px;
+      margin-bottom:10px;
+    }
+    .section-panel h2{ margin: 0 0 4px; }
+
+    .pill{
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 0 0, rgba(56,189,248,0.28), rgba(19, 33, 61, 0.88));
+      color: var(--text);
+      font-size: 1.0rem;
+      font-weight: 700;
+      border: 1px solid rgba(56,189,248,0.55);
+      box-shadow: 0 10px 24px rgba(2,6,23,0.18);
+      transition: background 0.2s ease, border-color 0.2s ease, transform .12s ease;
+    }
+    .pill:hover{ transform: translateY(-1px); border-color: rgba(56,189,248,0.9); }
+    body.light-mode .pill{
+      background: radial-gradient(circle at 0 0, rgba(56,189,248,0.10), #ffffff);
+      border-color: rgba(148,163,184,0.7);
+      box-shadow: none;
+    }
+
+    .btn.secondary{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 10px 14px;
+      font-size: 1.0rem;
+      font-weight: 700;
+      border-radius: 999px;
+
+      background: rgba(19, 33, 61, 0.86);
+      color: var(--text);
+      border: 1px solid rgba(186, 204, 228, 0.55);
+
+      cursor: pointer;
+      transition: transform .12s ease, background 0.2s ease, border-color 0.2s ease;
+    }
+    .btn.secondary:hover{
+      transform: translateY(-1px);
+      background: rgba(26, 48, 88, 0.88);
+      border-color: rgba(56,189,248,0.85);
+    }
+    body.light-mode .btn.secondary{
+      background: #ffffff;
+      border-color: rgba(148,163,184,0.7);
+      color: #0f172a;
+    }
+    body.light-mode .btn.secondary:hover{
+      background: #e5f0ff;
+      border-color: rgba(59,130,246,0.7);
+    }
+
+    .sr-only{
+      position:absolute;
+      width:1px;
+      height:1px;
+      padding:0;
+      margin:-1px;
+      overflow:hidden;
+      clip:rect(0,0,0,0);
+      border:0;
+    }
+    .icon-ln{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: #0a66c2;
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 1.0rem;
+      letter-spacing: 0.5px;
+      text-transform: lowercase;
+    }
+    .icon-mail{
+      width: 28px;
+      height: 28px;
+      display: inline-block;
+      flex: 0 0 auto;
+      color: currentColor;
+    }
+    .icon-mail svg{ width: 100%; height: 100%; display: block; }
+
+    /* HERO */
+    .hero{ padding-top: 46px; }
+    .hero-top{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+      padding-left: var(--panel-inner-x);
+      padding-right: var(--panel-inner-x);
+    }
+    .about-title{
+      font-size: clamp(2.6rem, 5vw, 3.6rem);
+      line-height: 1.06;
+      margin: 0;
+      letter-spacing: 0.2px;
+      text-shadow:
+        0 0 26px rgba(56,189,248,0.28),
+        0 0 18px rgba(34,197,94,0.12);
+      white-space: nowrap;
+    }
+    body.light-mode .about-title{
+      text-shadow:
+        0 0 22px rgba(56,189,248,0.10),
+        0 0 14px rgba(34,197,94,0.06);
+    }
+    .contact-actions{
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+    }
+    .about-blurb{
+      color: var(--muted);
+      font-size: 1.12rem;
+      margin: 12px 0 0;
+      text-align: justify;
+      text-justify: inter-word;
+      padding-left: var(--panel-inner-x);
+      padding-right: var(--panel-inner-x);
+    }
+
+    /* Cards */
+    .grid{ display: grid; gap: 14px; }
+
+    .card{
+      background:
+        radial-gradient(circle at top left, rgba(56,189,248,0.14), transparent 56%),
+        radial-gradient(circle at bottom right, rgba(34,197,94,0.10), transparent 58%),
+        var(--card);
+
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: none;
+
+      transition: transform .12s ease, border-color .12s ease, box-shadow .12s ease, background 0.25s ease, opacity .12s ease, filter .12s ease;
+    }
+
+    body.light-mode .card{
+      background:
+        radial-gradient(circle at top left, rgba(56,189,248,0.10), transparent 55%),
+        radial-gradient(circle at bottom right, rgba(34,197,94,0.07), transparent 55%),
+        #ffffff;
+      border-color: rgba(148,163,184,0.85);
+    }
+
+    .card:hover{
+      transform: translateY(-3px);
+      border-color: rgba(56,189,248,0.85);
+      box-shadow: none;
+    }
+    body.light-mode .card:hover{
+      border-color: rgba(59,130,246,0.8);
+      box-shadow: none;
+    }
+    .card h3{ margin: 0 0 8px; font-size: 1.1rem; }
+    .card p{ margin: 0 0 10px; color: var(--muted); }
+
+    /* Experience should NOT hover */
+    #experience .card{ cursor: default; }
+    #experience .card:hover{
+      transform: none !important;
+      border-color: var(--border) !important;
+      box-shadow: none !important;
+      filter: none !important;
+    }
+    body.light-mode #experience .card:hover{
+      border-color: var(--border) !important;
+      box-shadow: none !important;
+    }
+
+    /* ============================
+       ✅ TAGS
+    ============================ */
+    .tag{
+      font-size: 0.84rem;
+      padding: 5px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(186, 204, 228, 0.55);
+      color: var(--muted);
+      background: rgba(18, 31, 56, 0.78);
+      transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      --tag-bg: rgba(18, 31, 56, 0.78);
+    }
+    body.light-mode .tag{
+      background: #ffffff;
+      border-color: rgba(148,163,184,0.70);
+      color: #0f172a;
+      box-shadow: 0 1px 0 rgba(2,6,23,0.04);
+      --tag-bg: #ffffff;
+    }
+
+    .tag .tag-label{
+      display:inline-block;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .tag .tag-count{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 22px;
+      height: 20px;
+      padding: 0 6px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+      border: 1px solid rgba(186, 204, 228, 0.55);
+      background: rgba(186, 204, 228, 0.14);
+      color: var(--text);
+      line-height: 1;
+      transform: translateY(-0.5px);
+      flex: 0 0 auto;
+    }
+    body.light-mode .tag .tag-count{
+      border-color: rgba(148,163,184,0.80);
+      background: rgba(148,163,184,0.18);
+      color: #0f172a;
+    }
+
+    .tag-skill{
+      border-color: rgba(34,197,94,0.70);
+      background: rgba(34,197,94,0.14);
+      color: #bbf7d0;
+      --tag-bg: rgba(34,197,94,0.14);
+    }
+    body.light-mode .tag-skill{
+      background: #ecfdf3;
+      border-color: rgba(34,197,94,0.60);
+      color: #166534;
+      --tag-bg: #ecfdf3;
+    }
+
+    .tag-software{
+      border-color: rgba(56,189,248,0.78);
+      background: rgba(56,189,248,0.16);
+      color: #bae6fd;
+      --tag-bg: rgba(56,189,248,0.16);
+    }
+    body.light-mode .tag-software{
+      background: #eff6ff;
+      border-color: rgba(59,130,246,0.55);
+      color: #1e3a8a;
+      --tag-bg: #eff6ff;
+    }
+
+    .tag-year{ --tag-bg: rgba(18, 31, 56, 0.78); }
+    body.light-mode .tag-year{ --tag-bg: #ffffff; }
+
+    .tag-skill .tag-count{
+      border-color: rgba(34,197,94,0.55);
+      background: rgba(34,197,94,0.16);
+      color: inherit;
+    }
+    body.light-mode .tag-skill .tag-count{
+      border-color: rgba(34,197,94,0.55);
+      background: rgba(34,197,94,0.14);
+      color: inherit;
+    }
+    .tag-software .tag-count{
+      border-color: rgba(56,189,248,0.60);
+      background: rgba(56,189,248,0.16);
+      color: inherit;
+    }
+    body.light-mode .tag-software .tag-count{
+      border-color: rgba(59,130,246,0.55);
+      background: rgba(59,130,246,0.12);
+      color: inherit;
+    }
+
+    .meta-bubbles .tag[role="button"]{ cursor: pointer; }
+    .meta-bubbles .tag[role="button"]:focus-visible{
+      outline: 3px solid rgba(191,219,254,0.55);
+      outline-offset: 3px;
+    }
+    .meta-bubbles .tag.is-active{ cursor: pointer; }
+
+    .tag.is-active{
+      background: var(--selected-solid) !important;
+      border-color: rgba(2,6,23,0.35) !important;
+      color: var(--selected-text-dark) !important;
+      box-shadow:
+        0 0 0 4px var(--selected-ring),
+        0 10px 28px rgba(250,204,21,0.30);
+      transform: translateY(-2px) scale(1.02);
+      --tag-bg: var(--selected-solid);
+    }
+    .tag.is-active .tag-count{
+      border-color: rgba(2,6,23,0.25) !important;
+      background: rgba(2,6,23,0.12) !important;
+      color: var(--selected-text-dark) !important;
+    }
+
+    /* ===== EXPERIENCE (RESTORED) ===== */
+    .exp-card-header{ display:block; margin-bottom:6px; }
+    .exp-card-title-group{ min-width:0; }
+    .exp-card-title-group h3{
+      margin:0;
+      font-size:1.28rem;
+      line-height:1.18;
+      letter-spacing:0.1px;
+      overflow-wrap:anywhere;
+    }
+    .exp-card-title-group h4{
+      margin:4px 0 0;
+      font-size:1.02rem;
+      font-weight:600;
+      line-height:1.2;
+      color:var(--muted);
+      overflow-wrap:anywhere;
+    }
+    body.light-mode .exp-card-title-group h4{ color:#334155; }
+    .exp-location{
+      margin:10px 0 0;
+      font-size:0.95rem;
+      color:var(--muted);
+      line-height:1.25;
+    }
+    body.light-mode .exp-location{ color:#334155; }
+    .exp-date{
+      display:inline-flex;
+      margin:2px 0 10px;
+      width:fit-content;
+      max-width:100%;
+      white-space:normal;
+    }
+
+    /* Projects */
+    .project-card{ cursor: pointer; }
+    .thumb-wrap{
+      width: 100%;
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 10px;
+      aspect-ratio: 16 / 9;
+      background: #020617;
+    }
+    body.light-mode .thumb-wrap{ background: #e5e7eb; }
+    .project-thumb{
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform .25s ease;
+    }
+    .project-card:hover .project-thumb{ transform: scale(1.04); }
+    .project-meta{ margin: 0 0 6px; }
+
+    /* FILTER BAR */
+    .filters-wrap{
+      margin-top: 6px;
+      margin-bottom: 10px;
+      padding: 10px 12px 10px;
+      border-radius: var(--meta-card-radius);
+      border: 1px solid var(--meta-card-border);
+      background: var(--meta-card-bg);
+      user-select: none;
+      box-shadow: none;
+
+      /* ✅ Needed for overlay button */
+      position: relative;
+    }
+
+    /* ✅ FULL-AREA CLICK TARGET WHEN COLLAPSED */
+    .filters-open-overlay{
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      background: transparent;
+      padding: 0;
+      margin: 0;
+      border-radius: inherit;
+      cursor: pointer;
+
+      /* sit under header content so Clear can still be clicked */
+      z-index: 1;
+      display: none;
+    }
+    .filters-wrap.is-collapsed .filters-open-overlay{ display: block; }
+    .filters-wrap:not(.is-collapsed) .filters-open-overlay{ display: none; }
+
+    .filters-header{
+      position: relative;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+      cursor: pointer;
+
+      /* ✅ reserve space for chevron button (keeps header text from sitting under it) */
+      padding-right: calc(var(--filters-chev-right) + var(--arrow-size));
+      min-height: var(--arrow-size);
+
+      /* ✅ keep header above overlay */
+      z-index: 2;
+    }
+
+    .filters-left{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width: 220px;
+      pointer-events: none;
+    }
+
+    .filters-icon{
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      display:grid;
+      place-items:center;
+      border: 1px solid rgba(186, 204, 228, 0.55);
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      flex: 0 0 auto;
+      pointer-events: none;
+    }
+    body.light-mode .filters-icon{
+      background: rgba(255,255,255,0.95);
+      color:#0f172a;
+      border: 1px solid rgba(148,163,184,0.75);
+    }
+
+    .filters-title{
+      display:flex;
+      flex-direction:column;
+      gap:1px;
+      line-height:1.15;
+      pointer-events: none;
+    }
+    .filters-title strong{
+      font-size:0.95rem;
+      letter-spacing:0.2px;
+    }
+    .filters-title span{
+      font-size:0.82rem;
+      color: var(--muted);
+    }
+
+    .filters-actions{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      pointer-events: auto;
+      margin-left: auto;
+
+      /* ✅ KEY FIX: reserve space for the absolute chevron so Clear sits left of it */
+      padding-right: var(--filters-actions-pad-right);
+
+      /* ✅ keep actions above overlay */
+      position: relative;
+      z-index: 3;
+    }
+
+    .filters-clear,
+    .mini-btn{
+      display:none;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+
+      border-radius: 999px;
+      border: 1px solid rgba(186, 204, 228, 0.60);
+
+      background: rgba(19, 33, 61, 0.78);
+      color: var(--text);
+
+      cursor:pointer;
+      font-weight: 900;
+      font-size: 0.85rem;
+      line-height: 1;
+      padding: 8px 12px;
+
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.1s ease, opacity 0.12s ease;
+      opacity: 0.92;
+      white-space: nowrap;
+    }
+    .filters-clear:hover,
+    .mini-btn:hover{
+      background: rgba(37,99,235,0.82);
+      border-color: rgba(191,219,254,0.95);
+      transform: translateY(-1px);
+      opacity: 1;
+    }
+    .filters-clear:focus-visible,
+    .mini-btn:focus-visible{
+      outline: 3px solid rgba(191,219,254,0.55);
+      outline-offset: 2px;
+    }
+    body.light-mode .filters-clear,
+    body.light-mode .mini-btn{
+      background: rgba(255,255,255,0.95);
+      border-color: rgba(148,163,184,0.85);
+      color: #0f172a;
+    }
+    body.light-mode .filters-clear:hover,
+    body.light-mode .mini-btn:hover{
+      background: #e0f2fe;
+      border-color: rgba(59,130,246,0.95);
+    }
+
+    /* ✅ Filter bar chevron aligned EXACTLY with inner row chevrons */
+    .filters-chev{
+      position: absolute;
+      top: 50%;
+      right: var(--filters-chev-right);
+      transform: translateY(-50%);
+
+      width: var(--arrow-size);
+      height: var(--arrow-size);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 0;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      pointer-events: none;
+
+      /* ✅ above overlay */
+      z-index: 3;
+    }
+    .filters-chev span{
+      display:inline-block;
+      font-size: 1.1rem;
+      line-height: 1;
+      opacity: 0.95;
+      transform: rotate(0deg);
+      transition: transform .15s ease;
+    }
+
+    .filter-groups{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      margin-top: 10px;
+      cursor: default;
+      user-select: text;
+    }
+
+    .filters-wrap.is-collapsed .filter-groups{ display:none; }
+    .filters-wrap.is-collapsed .filters-chev span{ transform: rotate(-90deg); }
+
+    .filter-row{
+      width: 100%;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      align-items:flex-start;
+
+      /* ✅ uses variable so chevrons stay perfectly aligned */
+      padding: 10px var(--filter-row-pad-x) 10px;
+
+      border-radius: 14px;
+      border: 1px solid rgba(186, 204, 228, 0.45);
+      background: rgba(255,255,255,0.05);
+      transition: background 0.2s ease, border-color 0.2s ease, transform .12s ease;
+    }
+    .filter-row:hover{
+      transform: translateY(-1px);
+      border-color: rgba(56,189,248,0.62);
+      background: rgba(255,255,255,0.075);
+    }
+
+    body.light-mode .filter-row{
+      background: rgba(226,232,240,0.65);
+      border-color: rgba(148,163,184,0.75);
+    }
+    body.light-mode .filter-row:hover{
+      background: #e0f2fe;
+      border-color: rgba(59,130,246,0.65);
+    }
+
+    .filter-row-head{
+      width: 100%;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      cursor: pointer;
+      user-select: none;
+
+      /* ✅ uses variable so chevrons stay perfectly aligned */
+      padding: 2px var(--filter-row-head-pad-x);
+
+      border: none;
+      background: transparent;
+      outline: none;
+    }
+    .filter-row-head:focus-visible{
+      outline: 3px solid rgba(191,219,254,0.55);
+      outline-offset: 3px;
+      border-radius: 10px;
+    }
+
+    .filter-label{
+      font-size:0.78rem;
+      font-weight:900;
+      letter-spacing:0.35px;
+      text-transform:uppercase;
+      line-height:1.1;
+      min-width:0;
+      margin: 0;
+      pointer-events: none;
+    }
+
+    .row-chev{
+      width: 18px;
+      height: 18px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color: var(--muted);
+      flex: 0 0 auto;
+      pointer-events: none;
+    }
+    .filter-row:hover .row-chev{ color: var(--text); }
+    body.light-mode .row-chev{ color: #0f172a; }
+    body.light-mode .filter-row:hover .row-chev{ color: #0f172a; }
+
+    .row-chev span{
+      display:inline-block;
+      font-size: 1.05rem;
+      line-height: 1;
+      transform: rotate(0deg);
+      transition: transform .15s ease;
+    }
+
+    .filter-row.is-collapsed .meta-bubbles{ display:none; }
+    .filter-row.is-collapsed .row-chev span{ transform: rotate(-90deg); }
+
+    .filter-label.skills{ color:#bbf7d0; }
+    body.light-mode .filter-label.skills{ color:#166534; }
+    .filter-label.software{ color:#bae6fd; }
+    body.light-mode .filter-label.software{ color:#1e3a8a; }
+    .filter-label.year{ color: var(--muted); }
+    body.light-mode .filter-label.year{ color: #334155; }
+
+    .meta-bubbles{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      align-items:center;
+      width:100%;
+      min-width:0;
+      flex:0 0 auto;
+      cursor: default;
+      user-select: none;
+    }
+
+    .projects-carousel.is-empty{
+      overflow-x: hidden;
+      cursor: default;
+      scroll-snap-type: none;
+      justify-content: center;
+      align-items: stretch;
+    }
+
+    .empty-card{
+      flex: 0 0 calc((100% - (2 * var(--carousel-gap)))/3);
+      scroll-snap-align: start;
+      cursor: default;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    @media (max-width: 900px){
+      .empty-card{ flex: 0 0 calc((100% - var(--carousel-gap))/2); }
+    }
+    @media (max-width: 600px){
+      .empty-card{ flex: 0 0 100%; }
+    }
+
+    .empty-stack{
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 6px;
+    }
+
+    .empty-title{
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: 900;
+      letter-spacing: 0.1px;
+    }
+
+    footer{
+      margin-top: 14px;
+      padding: 10px 20px 20px;
+      color: var(--muted);
+      border-top: 1px solid rgba(56,189,248,0.45);
+      background: transparent;
+      font-size: 0.85rem;
+      transition: border-color 0.25s ease, color 0.25s ease;
+    }
+    body.light-mode footer{
+      border-top: 1px solid rgba(148,163,184,0.7);
+      background: transparent;
+    }
+
+    .footer-inner{
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding-left: var(--panel-inner-x);
+      padding-right: var(--panel-inner-x);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      text-align:left;
+    }
+
+    .theme-toggle{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:transparent;
+      color: var(--muted);
+      cursor:pointer;
+      font-size:0.85rem;
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.1s ease, color 0.2s ease;
+    }
+    .theme-toggle:hover{
+      background: rgba(255,255,255,0.06);
+      transform: translateY(-1px);
+      color: var(--text);
+    }
+    body.light-mode .theme-toggle:hover{ background:#e5f0ff; }
+    .theme-toggle-icon{ font-size:1.1rem; line-height:1; }
+
+    /* Projects carousel */
+    .projects-wrap{ position: relative; margin-top: 0; }
+
+    .projects-carousel{
+      display:flex;
+      gap: var(--carousel-gap);
+      overflow-x:auto;
+      scroll-snap-type:x mandatory;
+      scroll-behavior:smooth;
+
+      padding-top: 4px;
+      padding-bottom: 10px;
+
+      padding-left:  var(--carousel-pad);
+      padding-right: var(--carousel-pad);
+
+      cursor: grab;
+      align-items: stretch;
+    }
+    .projects-carousel.dragging{ cursor: grabbing; scroll-snap-type: none; }
+
+    .projects-carousel::-webkit-scrollbar{ height: 8px; }
+    .projects-carousel::-webkit-scrollbar-thumb{
+      background: rgba(186, 204, 228, 0.65);
+      border-radius: 999px;
+    }
+    .projects-carousel::-webkit-scrollbar-track{ background: transparent; }
+
+    .projects-carousel .card{
+      flex: 0 0 calc((100% - (2 * var(--carousel-gap)))/3);
+      scroll-snap-align: start;
+    }
+
+    .carousel-btn{
+      position:absolute;
+      top:50%;
+      transform: translateY(-50%);
+      z-index:5;
+
+      width: var(--arrow-size);
+      height: var(--arrow-size);
+      border-radius: 999px;
+      border: 1px solid rgba(186, 204, 228, 0.60);
+
+      background: rgba(19, 33, 61, 0.78);
+      color: var(--text);
+
+      display:flex;
+      align-items:center;
+      justify-content:center;
+
+      cursor:pointer;
+      font-size: 1.2rem;
+      line-height: 1;
+      padding: 0;
+
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.1s ease, opacity 0.12s ease;
+      opacity: 0.92;
+    }
+    .carousel-btn:hover{
+      background: rgba(37,99,235,0.82);
+      border-color: rgba(191,219,254,0.95);
+      transform: translateY(-50%) scale(1.05);
+    }
+    body.light-mode .carousel-btn{
+      background: rgba(255,255,255,0.95);
+      border-color: rgba(148,163,184,0.85);
+      color: #0f172a;
+    }
+    body.light-mode .carousel-btn:hover{
+      background: #e0f2fe;
+      border-color: rgba(59,130,246,0.95);
+    }
+    .carousel-btn:disabled{ opacity: 0.3; cursor: default; }
+
+    .carousel-btn.prev{ left: var(--carousel-edge); }
+    .carousel-btn.next{ right: var(--carousel-edge); }
+
+    @media (max-width: 900px){
+      .projects-carousel .card{ flex: 0 0 calc((100% - var(--carousel-gap))/2); }
+    }
+
+    @media (max-width: 600px){
+      .hero{ padding-top: 34px; }
+      .about-title{ white-space: normal; }
+
+      .hero-top,
+      .about-blurb{
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+
+      .projects-carousel .card{ flex: 0 0 100%; }
+      :root{
+        --carousel-edge: 1px;
+        --arrow-size: 28px;
+        --arrow-gap: 6px;
+      }
+      .carousel-btn{ font-size: 1.05rem; }
+      .footer-inner{ justify-content: center; text-align: center; }
+      .filters-left{ min-width: 0; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <!-- HERO -->
+    <section id="about" class="section hero">
+      <div class="container">
+        <div class="hero-top">
+          <h1 class="about-title">Sean A'Hearn</h1>
+
+          <div class="contact-actions" aria-label="Contact links">
+            <a class="pill" href="assets/YourName_CV.pdf" target="_blank" rel="noopener">CV ↗</a>
+
+            <a class="btn secondary" href="mailto:seanahearn2002@gmail.com" aria-label="Email">
+              <span class="icon-mail" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M4 6.5C4 5.67157 4.67157 5 5.5 5H18.5C19.3284 5 20 5.67157 20 6.5V17.5C20 18.3284 19.3284 19 18.5 19H5.5C4.67157 19 4 18.3284 4 17.5V6.5Z"
+                        stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                  <path d="M5.5 7L12 12.25L18.5 7"
+                        stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+              <span class="sr-only">Email</span>
+            </a>
+
+            <a class="btn secondary" href="https://www.linkedin.com/in/sean-ahearn/" target="_blank" rel="noopener" aria-label="LinkedIn">
+              <span class="icon-ln">in</span>
+              <span class="sr-only">LinkedIn</span>
+            </a>
+          </div>
+        </div>
+
+        <p class="about-blurb">
+          I am a passionate and driven Master of Biomedical Engineering student with a strong
+          commitment to advancing healthcare through the research, design and development of impactful medical devices.
+        </p>
+      </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects" class="section">
+      <div class="container">
+        <div class="section-panel">
+          <div class="section-header">
+            <div>
+              <h2>Projects</h2>
+              <p style="color:var(--muted); margin:0;"></p>
+            </div>
+          </div>
+
+          <!-- FILTER BAR -->
+          <div class="filters-wrap" id="filtersWrap" aria-label="Project filters">
+            <!-- ✅ FULL-AREA CLICK TARGET WHEN COLLAPSED -->
+            <button
+              class="filters-open-overlay"
+              id="filtersOverlay"
+              type="button"
+              aria-label="Open filters"
+              tabindex="-1"
+            ></button>
+
+            <div class="filters-header" id="filtersHeader" role="button" tabindex="0" aria-expanded="false" aria-controls="filtersGroups">
+              <div class="filters-left">
+                <div class="filters-icon" aria-hidden="true" title="Filters">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4 6h16M7 12h10M10 18h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <div class="filters-title">
+                  <strong>Filter</strong>
+                  <span>Year, skills and tools</span>
+                </div>
+              </div>
+
+              <div class="filters-actions">
+                <button class="filters-clear" id="clearFilterBtn" type="button" aria-label="Clear all filters">
+                  Clear
+                </button>
+
+                <div class="filters-chev" aria-hidden="true" title="Show/Hide filters">
+                  <span>▾</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="filter-groups" id="filtersGroups">
+              <div class="filter-row" id="rowYear">
+                <div class="filter-row-head" role="button" tabindex="0" data-row-toggle="rowYear" aria-expanded="true" aria-controls="yearBubbles">
+                  <div class="filter-label year">Year</div>
+                  <div class="row-chev" aria-hidden="true"><span>▾</span></div>
+                </div>
+                <div class="meta-bubbles" id="yearBubbles">
+                  <span class="tag tag-year">Loading…</span>
+                </div>
+              </div>
+
+              <div class="filter-row" id="rowSkills">
+                <div class="filter-row-head" role="button" tabindex="0" data-row-toggle="rowSkills" aria-expanded="true" aria-controls="skillsTechBubbles">
+                  <div class="filter-label skills">Skills</div>
+                  <div class="row-chev" aria-hidden="true"><span>▾</span></div>
+                </div>
+                <div class="meta-bubbles" id="skillsTechBubbles">
+                  <span class="tag tag-skill">Loading…</span>
+                </div>
+              </div>
+
+              <div class="filter-row" id="rowSoftware">
+                <div class="filter-row-head" role="button" tabindex="0" data-row-toggle="rowSoftware" aria-expanded="true" aria-controls="skillsSoftwareBubbles">
+                  <div class="filter-label software">Software & Tools</div>
+                  <div class="row-chev" aria-hidden="true"><span>▾</span></div>
+                </div>
+                <div class="meta-bubbles" id="skillsSoftwareBubbles">
+                  <span class="tag tag-software">Loading…</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="projects-wrap">
+            <button class="carousel-btn prev" id="projPrev" aria-label="Previous projects">‹</button>
+            <div class="projects-carousel" id="projectsCarousel"></div>
+            <button class="carousel-btn next" id="projNext" aria-label="Next projects">›</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXPERIENCE -->
+    <section id="experience" class="section">
+      <div class="container">
+        <div class="section-panel">
+          <div class="section-header">
+            <div>
+              <h2>Experience</h2>
+              <p style="color:var(--muted); margin:0;"></p>
+            </div>
+          </div>
+
+          <div class="grid">
+            <div class="card">
+              <div class="exp-card-header">
+                <div class="exp-card-title-group">
+                  <h3>Intern Biomedical Engineer</h3>
+                  <h4>Murdoch Children’s Research Institute</h4>
+                </div>
+              </div>
+
+              <p class="exp-location">Parkville, Victoria, Australia</p>
+
+              <span class="tag exp-date">Jul 2025 – Nov 2025</span>
+
+              <p>Cardiovascular Bioengineering Team – Heart Research Group</p>
+              <ul style="padding-left:18px; color:var(--muted); margin:0;">
+                <li>Tested, validated and optimised multiple biosignal sensors</li>
+                <li>Researched and evaluated materials for use in a prototype medical device</li>
+                <li>Developed a Signal Quality Index (SQI) algorithm to assess and quantify biosignal quality</li>
+                <li>Contributed to data-driven decisions on sensor selection and material suitability</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="tag-tooltip" id="tagTooltip" role="tooltip" aria-hidden="true"></div>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <span>© <span id="year"></span> Sean A'Hearn</span>
+      <button id="themeToggle" class="theme-toggle" type="button">
+        <span id="themeToggleIcon" class="theme-toggle-icon" aria-hidden="true">☀</span>
+        <span class="theme-toggle-label">Dark mode</span>
+      </button>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    // ===== Projects carousel arrows + drag =====
+    const carousel = document.getElementById("projectsCarousel");
+    const prevBtn = document.getElementById("projPrev");
+    const nextBtn = document.getElementById("projNext");
+
+    function scrollByCard(dir = 1){
+      const card = carousel.querySelector(".card");
+      if(!card) return;
+
+      const styles = getComputedStyle(carousel);
+      const gap = parseFloat(styles.gap) || 14;
+      const cardW = card.getBoundingClientRect().width + gap;
+
+      carousel.scrollBy({ left: dir * cardW, behavior: "smooth" });
+    }
+
+    prevBtn.addEventListener("click", () => scrollByCard(-1));
+    nextBtn.addEventListener("click", () => scrollByCard(1));
+
+    function updateBtns(){
+      const maxLeft = carousel.scrollWidth - carousel.clientWidth - 2;
+      const nothingToScroll = carousel.scrollWidth <= carousel.clientWidth + 4;
+      prevBtn.disabled = carousel.scrollLeft <= 2 || nothingToScroll;
+      nextBtn.disabled = carousel.scrollLeft >= maxLeft || nothingToScroll;
+    }
+    carousel.addEventListener("scroll", updateBtns);
+    window.addEventListener("resize", updateBtns);
+
+    let isDown = false, startX = 0, startLeft = 0;
+    carousel.addEventListener("mousedown", (e) => {
+      isDown = true;
+      carousel.classList.add("dragging");
+      startX = e.pageX;
+      startLeft = carousel.scrollLeft;
+    });
+    window.addEventListener("mouseup", () => {
+      isDown = false;
+      carousel.classList.remove("dragging");
+    });
+    window.addEventListener("mousemove", (e) => {
+      if(!isDown) return;
+      const walk = e.pageX - startX;
+      carousel.scrollLeft = startLeft - walk;
+    });
+
+    // ===== Tooltip (disabled now) =====
+    const tooltip = document.getElementById("tagTooltip");
+    function hideTooltip(){
+      if(!tooltip) return;
+      tooltip.style.opacity = "0";
+      tooltip.style.transform = "translateY(4px)";
+      tooltip.setAttribute("aria-hidden", "true");
+    }
+
+    // ===== Tag + project data =====
+    const techBubblesEl = document.getElementById("skillsTechBubbles");
+    const softBubblesEl = document.getElementById("skillsSoftwareBubbles");
+    const yearBubblesEl = document.getElementById("yearBubbles");
+    const clearBtn = document.getElementById("clearFilterBtn");
+
+    const filtersWrap = document.getElementById("filtersWrap");
+    const filtersHeader = document.getElementById("filtersHeader");
+    const filtersOverlay = document.getElementById("filtersOverlay");
+
+    const projectsData = []; // { url, title, yearLabel, yearValue, image, skills:[], software:[] }
+
+    function normTag(s){
+      return (s || "").replace(/\s+/g, " ").trim();
+    }
+    function uniqueSorted(arr){
+      return Array.from(new Set(arr.filter(Boolean))).sort((a,b)=>a.localeCompare(b));
+    }
+
+    function extractYearValue(projectYearMeta){
+      const txt = normTag(projectYearMeta);
+      const matches = txt.match(/\b(19|20)\d{2}\b/g);
+      if(!matches || matches.length === 0) return null;
+      return parseInt(matches[0], 10);
+    }
+
+    function projectHasTag(p, type, tag){
+      const key = (type === "software") ? "software" : "skills";
+      const n = normTag(tag).toLowerCase();
+      return (p[key] || []).some(t => normTag(t).toLowerCase() === n);
+    }
+
+    function projectMatchesYear(p, year){
+      return p.yearValue === year;
+    }
+
+    /* MULTI-SELECT FILTERING (AND logic for ALL categories, including YEARS) */
+    const activeFilters = {
+      skills: new Set(),
+      software: new Set(),
+      years: new Set()
+    };
+
+    function setHasCaseInsensitive(set, value){
+      const v = normTag(value).toLowerCase();
+      for(const item of set){
+        if(normTag(item).toLowerCase() === v) return true;
+      }
+      return false;
+    }
+
+    function deleteFromSetCaseInsensitive(set, value){
+      const v = normTag(value).toLowerCase();
+      for(const item of Array.from(set)){
+        if(normTag(item).toLowerCase() === v){
+          set.delete(item);
+        }
+      }
+    }
+
+    function hasAnyFilters(){
+      return activeFilters.skills.size > 0 || activeFilters.software.size > 0 || activeFilters.years.size > 0;
+    }
+
+    function matchesActiveFilters(project){
+      for (const s of activeFilters.skills){
+        if(!projectHasTag(project, "skill", s)) return false;
+      }
+      for (const t of activeFilters.software){
+        if(!projectHasTag(project, "software", t)) return false;
+      }
+      for (const y of activeFilters.years){
+        if(!projectMatchesYear(project, Number(y))) return false;
+      }
+      return true;
+    }
+
+    function updateClearButton(){
+      clearBtn.style.display = hasAnyFilters() ? "inline-flex" : "none";
+    }
+
+    function toggleFilter(type, tag){
+      const set = (type === "software") ? activeFilters.software : activeFilters.skills;
+      const key = normTag(tag);
+
+      if(setHasCaseInsensitive(set, key)){
+        deleteFromSetCaseInsensitive(set, key);
+      }else{
+        set.add(key);
+      }
+
+      renderTagClouds();
+      renderCarousel();
+      updateClearButton();
+
+      carousel.scrollLeft = 0;
+      updateBtns();
+    }
+
+    function toggleYear(year){
+      const y = Number(year);
+      if(activeFilters.years.has(y)){
+        activeFilters.years.delete(y);
+      }else{
+        activeFilters.years.add(y);
+      }
+
+      renderTagClouds();
+      renderCarousel();
+      updateClearButton();
+
+      carousel.scrollLeft = 0;
+      updateBtns();
+    }
+
+    function clearAllFilters(){
+      activeFilters.skills.clear();
+      activeFilters.software.clear();
+      activeFilters.years.clear();
+
+      renderTagClouds();
+      renderCarousel();
+      updateClearButton();
+
+      carousel.scrollLeft = 0;
+      updateBtns();
+    }
+
+    clearBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      clearAllFilters();
+    });
+
+    // ===== Collapse toggle (closed by default) =====
+    function setFiltersCollapsed(collapsed){
+      if(collapsed){
+        filtersWrap.classList.add("is-collapsed");
+        filtersHeader.setAttribute("aria-expanded", "false");
+
+        // ✅ Make overlay focusable only when collapsed
+        filtersOverlay.tabIndex = 0;
+      }else{
+        filtersWrap.classList.remove("is-collapsed");
+        filtersHeader.setAttribute("aria-expanded", "true");
+
+        // ✅ Remove overlay from tab order when open
+        filtersOverlay.tabIndex = -1;
+      }
+    }
+    setFiltersCollapsed(true);
+
+    function toggleFiltersOpenClose(){
+      const isCollapsed = filtersWrap.classList.contains("is-collapsed");
+      setFiltersCollapsed(!isCollapsed);
+    }
+
+    // Existing header click still works
+    filtersHeader.addEventListener("click", (e) => {
+      if(e.target.closest("#clearFilterBtn")) return;
+      toggleFiltersOpenClose();
+    });
+
+    filtersHeader.addEventListener("keydown", (e) => {
+      if(e.key === "Enter" || e.key === " "){
+        e.preventDefault();
+        toggleFiltersOpenClose();
+      }
+    });
+
+    // ✅ NEW: Full-area overlay click/keyboard when collapsed
+    function openFiltersFromOverlay(){
+      if(!filtersWrap.classList.contains("is-collapsed")) return;
+      setFiltersCollapsed(false);
+    }
+
+    filtersOverlay.addEventListener("click", (e) => {
+      e.preventDefault();
+      openFiltersFromOverlay();
+    });
+
+    filtersOverlay.addEventListener("keydown", (e) => {
+      if(e.key === "Enter" || e.key === " "){
+        e.preventDefault();
+        openFiltersFromOverlay();
+      }
+    });
+
+    /* Per-category collapse/minimise */
+    function setRowCollapsed(rowEl, collapsed){
+      if(!rowEl) return;
+      const head = rowEl.querySelector(".filter-row-head");
+      const label = rowEl.querySelector(".filter-label")?.textContent?.trim() || "Category";
+
+      if(collapsed){
+        rowEl.classList.add("is-collapsed");
+        head?.setAttribute("aria-expanded", "false");
+        head?.setAttribute("aria-label", `Expand ${label}`);
+      }else{
+        rowEl.classList.remove("is-collapsed");
+        head?.setAttribute("aria-expanded", "true");
+        head?.setAttribute("aria-label", `Collapse ${label}`);
+      }
+    }
+
+    function toggleRow(rowId){
+      const row = document.getElementById(rowId);
+      if(!row) return;
+      const isCollapsed = row.classList.contains("is-collapsed");
+      setRowCollapsed(row, !isCollapsed);
+    }
+
+    document.querySelectorAll(".filter-row-head[data-row-toggle]").forEach(head => {
+      const rowId = head.getAttribute("data-row-toggle");
+      const row = document.getElementById(rowId);
+      setRowCollapsed(row, false);
+
+      head.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleRow(rowId);
+      });
+
+      head.addEventListener("keydown", (e) => {
+        if(e.key === "Enter" || e.key === " "){
+          e.preventDefault();
+          e.stopPropagation();
+          toggleRow(rowId);
+        }
+      });
+    });
+
+    /* FACET COUNTS */
+    function getItemsMatching(filtersOverride = null){
+      const f = filtersOverride || {
+        skills: new Set(activeFilters.skills),
+        software: new Set(activeFilters.software),
+        years: new Set(activeFilters.years)
+      };
+
+      function matchesWith(project){
+        for (const s of f.skills){
+          if(!projectHasTag(project, "skill", s)) return false;
+        }
+        for (const t of f.software){
+          if(!projectHasTag(project, "software", t)) return false;
+        }
+        for (const y of f.years){
+          if(!projectMatchesYear(project, Number(y))) return false;
+        }
+        return true;
+      }
+
+      return projectsData.filter(matchesWith);
+    }
+
+    function countIfAddSkill(tagText){
+      const isActive = setHasCaseInsensitive(activeFilters.skills, tagText);
+      if(isActive) return getItemsMatching().length;
+
+      const f = {
+        skills: new Set(activeFilters.skills),
+        software: new Set(activeFilters.software),
+        years: new Set(activeFilters.years)
+      };
+      f.skills.add(normTag(tagText));
+      return getItemsMatching(f).length;
+    }
+
+    function countIfAddSoftware(tagText){
+      const isActive = setHasCaseInsensitive(activeFilters.software, tagText);
+      if(isActive) return getItemsMatching().length;
+
+      const f = {
+        skills: new Set(activeFilters.skills),
+        software: new Set(activeFilters.software),
+        years: new Set(activeFilters.years)
+      };
+      f.software.add(normTag(tagText));
+      return getItemsMatching(f).length;
+    }
+
+    function countIfAddYear(year){
+      const y = Number(year);
+      const isActive = activeFilters.years.has(y);
+      if(isActive) return getItemsMatching().length;
+
+      const f = {
+        skills: new Set(activeFilters.skills),
+        software: new Set(activeFilters.software),
+        years: new Set(activeFilters.years)
+      };
+      f.years.add(y);
+      return getItemsMatching(f).length;
+    }
+
+    function makeCountedPillBase(className, labelText, count, ariaLabel){
+      const wrap = document.createElement("span");
+      wrap.className = className;
+      wrap.setAttribute("role", "button");
+      wrap.setAttribute("tabindex", "0");
+      wrap.setAttribute("aria-label", ariaLabel);
+
+      const label = document.createElement("span");
+      label.className = "tag-label";
+      label.textContent = labelText;
+
+      const badge = document.createElement("span");
+      badge.className = "tag-count";
+      badge.textContent = String(count);
+
+      wrap.appendChild(label);
+      wrap.appendChild(badge);
+
+      return wrap;
+    }
+
+    function makeTagPill(type, tagText, count){
+      const isSoftware = (type === "software");
+      const wrap = makeCountedPillBase(
+        `tag ${isSoftware ? "tag-software" : "tag-skill"}`,
+        tagText,
+        count,
+        `Toggle filter: ${tagText} (${count})`
+      );
+
+      const isActive = isSoftware
+        ? setHasCaseInsensitive(activeFilters.software, tagText)
+        : setHasCaseInsensitive(activeFilters.skills, tagText);
+
+      wrap.setAttribute("aria-pressed", isActive ? "true" : "false");
+      if(isActive) wrap.classList.add("is-active");
+
+      function onSelect(){ toggleFilter(type, tagText); }
+
+      wrap.addEventListener("click", (e) => { e.stopPropagation(); onSelect(); });
+      wrap.addEventListener("keydown", (e) => {
+        if(e.key === "Enter" || e.key === " "){
+          e.preventDefault(); e.stopPropagation(); onSelect();
+        }
+      });
+
+      return wrap;
+    }
+
+    function makeYearPill(year, count){
+      const y = Number(year);
+
+      const wrap = makeCountedPillBase(
+        "tag tag-year",
+        String(y),
+        count,
+        `Toggle year filter: ${y} (would be ${count})`
+      );
+
+      const isActive = activeFilters.years.has(y);
+      wrap.setAttribute("aria-pressed", isActive ? "true" : "false");
+      if(isActive) wrap.classList.add("is-active");
+
+      function onSelect(){ toggleYear(y); }
+
+      wrap.addEventListener("click", (e) => { e.stopPropagation(); onSelect(); });
+      wrap.addEventListener("keydown", (e) => {
+        if(e.key === "Enter" || e.key === " "){
+          e.preventDefault(); e.stopPropagation(); onSelect();
+        }
+      });
+
+      return wrap;
+    }
+
+    function renderTagClouds(){
+      const allSkills = [];
+      const allSoftware = [];
+      const allYears = [];
+
+      projectsData.forEach(p => {
+        (p.skills || []).forEach(s => allSkills.push(normTag(s)));
+        (p.software || []).forEach(s => allSoftware.push(normTag(s)));
+        if(Number.isFinite(p.yearValue)) allYears.push(p.yearValue);
+      });
+
+      const skillsOrdered = uniqueSorted(allSkills);
+      const softwareOrdered = uniqueSorted(allSoftware);
+
+      const yearsUnique = Array.from(new Set(allYears)).filter(Number.isFinite);
+      const yearsOrdered = yearsUnique.slice().sort((a,b) => b - a);
+
+      yearBubblesEl.innerHTML = "";
+      if(yearsOrdered.length === 0){
+        yearBubblesEl.innerHTML = `<span class="tag tag-year">No year meta found</span>`;
+      }else{
+        yearsOrdered.forEach(y => {
+          const c = countIfAddYear(y);
+          yearBubblesEl.appendChild(makeYearPill(y, c));
+        });
+      }
+
+      techBubblesEl.innerHTML = "";
+      if(skillsOrdered.length === 0){
+        techBubblesEl.innerHTML = `<span class="tag tag-skill">Add skills on project pages to populate</span>`;
+      }else{
+        skillsOrdered.forEach(t => {
+          const c = countIfAddSkill(t);
+          techBubblesEl.appendChild(makeTagPill("skill", t, c));
+        });
+      }
+
+      softBubblesEl.innerHTML = "";
+      if(softwareOrdered.length === 0){
+        softBubblesEl.innerHTML = `<span class="tag tag-software">Add software tags on project pages to populate</span>`;
+      }else{
+        softwareOrdered.forEach(t => {
+          const c = countIfAddSoftware(t);
+          softBubblesEl.appendChild(makeTagPill("software", t, c));
+        });
+      }
+    }
+
+    function renderCarousel(){
+      carousel.innerHTML = "";
+
+      let items = projectsData.slice();
+      if(hasAnyFilters()){
+        items = items.filter(p => matchesActiveFilters(p));
+      }
+
+      if(items.length === 0){
+        carousel.classList.add("is-empty");
+
+        const empty = document.createElement("div");
+        empty.className = "card empty-card";
+        empty.innerHTML = `
+          <div class="empty-stack">
+            <h3 class="empty-title">No matches</h3>
+            <button class="mini-btn" type="button">Clear</button>
+          </div>
+        `;
+        carousel.appendChild(empty);
+
+        const btn = empty.querySelector("button");
+        btn.style.display = "inline-flex";
+        btn.addEventListener("click", clearAllFilters);
+
+        updateBtns();
+        return;
+      }
+
+      carousel.classList.remove("is-empty");
+
+      items.forEach(p => {
+        const link = document.createElement("a");
+        link.href = p.url;
+        link.className = "card project-card";
+        link.setAttribute("aria-label", `Open project: ${p.title}`);
+
+        link.innerHTML = `
+          ${p.image ? `
+            <div class="thumb-wrap">
+              <img src="${p.image}" alt="${p.title}" class="project-thumb">
+            </div>` : ""}
+          <p class="project-meta">
+            ${p.yearLabel ? `<span class="tag">${p.yearLabel}</span>` : ""}
+          </p>
+          <h3>${p.title}</h3>
+        `;
+
+        carousel.appendChild(link);
+      });
+    }
+
+    const projectFiles = [
+      "projects/example-project/",
+      "projects/signal-quality-algorithm/",
+      "projects/hearing-aid-prototype/",
+      "projects/sun-safety-sensor/",
+    ];
+
+    function extractTagsFromProjectDoc(doc){
+      const skills = Array.from(doc.querySelectorAll(".tag-skill")).map(el => normTag(el.textContent));
+      const software = Array.from(doc.querySelectorAll(".tag-software")).map(el => normTag(el.textContent));
+      return { skills: uniqueSorted(skills), software: uniqueSorted(software) };
+    }
+
+    async function loadProjects(){
+      projectsData.length = 0;
+
+      for (const url of projectFiles){
+        try{
+          const resp = await fetch(url);
+          if (!resp.ok) continue;
+
+          const text = await resp.text();
+          const doc = new DOMParser().parseFromString(text, "text/html");
+
+          const title = doc.querySelector('meta[name="project-title"]')?.content || "Untitled project";
+          const yearLabel  = doc.querySelector('meta[name="project-year"]')?.content || "";
+          const image = doc.querySelector('meta[name="project-image"]')?.content || "";
+
+          const yearValue = extractYearValue(yearLabel);
+          const tags = extractTagsFromProjectDoc(doc);
+
+          projectsData.push({
+            url,
+            title,
+            yearLabel,
+            yearValue,
+            image,
+            skills: tags.skills,
+            software: tags.software
+          });
+
+        }catch(err){
+          console.error("Error loading project file:", url, err);
+        }
+      }
+
+      renderTagClouds();
+      renderCarousel();
+      updateClearButton();
+      updateBtns();
+    }
+    loadProjects();
+
+    document.addEventListener("keydown", (e) => {
+      if(e.key === "Escape") hideTooltip();
+    });
+
+    // ===== Theme toggle =====
+    const themeToggle = document.getElementById("themeToggle");
+    const themeToggleIcon = document.getElementById("themeToggleIcon");
+    const themeToggleLabel = document.querySelector(".theme-toggle-label");
+    const THEME_KEY = "portfolio-theme";
+
+    function applyTheme(theme){
+      if(theme === "light"){
+        document.body.classList.add("light-mode");
+        themeToggleIcon.textContent = "☀";
+        themeToggleLabel.textContent = "Light mode";
+        themeToggle.setAttribute("aria-label", "Switch to dark mode");
+      }else{
+        document.body.classList.remove("light-mode");
+        themeToggleIcon.textContent = "☾";
+        themeToggleLabel.textContent = "Dark mode";
+        themeToggle.setAttribute("aria-label", "Switch to light mode");
+      }
+    }
+
+    (function initTheme(){
+      const saved = localStorage.getItem(THEME_KEY);
+      if(saved === "light" || saved === "dark"){
+        applyTheme(saved);
+      }else{
+        const prefersLight = window.matchMedia &&
+          window.matchMedia("(prefers-color-scheme: light)").matches;
+        applyTheme(prefersLight ? "light" : "dark");
+      }
+    })();
+
+    themeToggle.addEventListener("click", () => {
+      const isLight = document.body.classList.contains("light-mode");
+      const next = isLight ? "dark" : "light";
+      applyTheme(next);
+      localStorage.setItem(THEME_KEY, next);
+    });
+  </script>
+</body>
+</html>
