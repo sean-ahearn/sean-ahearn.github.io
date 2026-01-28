@@ -274,7 +274,19 @@
       font-weight: 800;
       letter-spacing: 0.3px;
       white-space: nowrap;
+      font-size: 1.35rem;
     }
+
+    .brand-link {
+      text-decoration: none;
+      color: inherit;
+      cursor: pointer;
+    }
+
+    .brand-link:hover .brand {
+      opacity: 0.9;
+    }
+
 
     .nav-left {
       display: flex;
@@ -372,6 +384,11 @@
       box-shadow: none;
       border-radius: 999px;
     }
+
+    .btn.btn-compact {
+      min-height: 40px;
+    }
+
 
     .icon-ln {
       display: inline-flex;
@@ -639,7 +656,7 @@
       font-size: 1.0rem;
       font-weight: 400;
       color: var(--muted);
-      text-align: justify;
+      text-align: left;
       text-justify: inter-word;
     }
 
@@ -893,7 +910,7 @@
       }
 
       .brand {
-        font-size: 1.05rem;
+        font-size: 1.15rem;
         white-space: nowrap;
       }
 
@@ -1982,9 +1999,12 @@
     <div class="nav-container">
       <nav>
         <div class="nav-left">
-          <div class="brand">Sean A'Hearn</div>
+          <a href="/" class="brand-link">
+            <div class="brand">Sean A'Hearn</div>
+          </a>
           <div class="nav-actions">
-            <a class="pill" href="../../assets/YourName_CV.pdf" target="_blank" rel="noopener">CV ↗</a>
+            <a class="btn secondary btn-compact" href="../../assets/SeanAHearn_Resume.pdf" target="_blank"
+              rel="noopener">Resume ⤓</a>
 
             <a class="btn secondary btn-compact" href="mailto:seanahearn2002@gmail.com" aria-label="Email">
               <span class="icon-mail" aria-hidden="true">
