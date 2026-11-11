@@ -983,47 +983,72 @@
       scroll-snap-align: start;
     }
 
-    .carousel-btn{
-      position:absolute;
-      top:50%;
-      transform: translateY(-50%);
-      z-index:5;
+    .carousel-btn {
+      --nav-bg: #203456;
+      --nav-color: #eef6ff;
+      --nav-border: #647da2;
+      --nav-hover-bg: #2a456a;
+      --nav-highlight: #7dd3fc;
+      --nav-shadow: rgba(4, 12, 28, 0.30);
 
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 5;
+      display: grid;
+      place-items: center;
       width: var(--arrow-size);
       height: var(--arrow-size);
-      border-radius: 999px;
-      border: 1px solid rgba(186, 204, 228, 0.60);
-
-      background: rgba(19, 33, 61, 0.78);
-      color: var(--text);
-
-      display:flex;
-      align-items:center;
-      justify-content:center;
-
-      cursor:pointer;
-      font-size: 1.2rem;
-      line-height: 1;
       padding: 0;
+      border: 1px solid var(--nav-border);
+      border-radius: 50%;
+      background: var(--nav-bg);
+      color: var(--nav-color);
+      box-shadow: 0 2px 6px var(--nav-shadow);
+      cursor: pointer;
+      transition: background-color .18s ease, border-color .18s ease, transform .18s ease;
+    }
 
-      transition: background 0.2s ease, border-color 0.2s ease, transform 0.1s ease, opacity 0.12s ease;
-      opacity: 0.92;
+    body.light-mode .carousel-btn {
+      --nav-bg: #ffffff;
+      --nav-color: #203456;
+      --nav-border: #9cafc6;
+      --nav-hover-bg: #eaf5ff;
+      --nav-highlight: #2563a5;
+      --nav-shadow: rgba(32, 52, 86, 0.16);
     }
-    .carousel-btn:hover{
-      background: rgba(37,99,235,0.82);
-      border-color: rgba(191,219,254,0.95);
-      transform: translateY(-50%) scale(1.05);
+
+    .carousel-btn svg {
+      display: block;
+      width: 20px;
+      height: 20px;
+      pointer-events: none;
     }
-    body.light-mode .carousel-btn{
-      background: rgba(255,255,255,0.95);
-      border-color: rgba(148,163,184,0.85);
-      color: #0f172a;
+
+    .carousel-btn:enabled:hover,
+    .carousel-btn:focus-visible {
+      background: var(--nav-hover-bg);
+      border-color: var(--nav-highlight);
     }
-    body.light-mode .carousel-btn:hover{
-      background: #e0f2fe;
-      border-color: rgba(59,130,246,0.95);
+
+    .carousel-btn:focus-visible {
+      outline: 2px solid var(--nav-highlight);
+      outline-offset: 2px;
     }
-    .carousel-btn:disabled{ opacity: 0.3; cursor: default; }
+
+    .carousel-btn:enabled:active {
+      transform: translateY(-50%) scale(0.94);
+    }
+
+    .carousel-btn:disabled {
+      opacity: 0.42;
+      box-shadow: none;
+      cursor: default;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .carousel-btn { transition: none; }
+    }
 
     .carousel-btn.prev{ left: var(--carousel-edge); }
     .carousel-btn.next{ right: var(--carousel-edge); }
@@ -1048,7 +1073,6 @@
         --arrow-size: 28px;
         --arrow-gap: 6px;
       }
-      .carousel-btn{ font-size: 1.05rem; }
       .footer-inner{ justify-content: center; text-align: center; }
       .filters-left{ min-width: 0; }
     }
@@ -1173,9 +1197,9 @@
           </div>
 
           <div class="projects-wrap">
-            <button class="carousel-btn prev" id="projPrev" aria-label="Previous projects">‹</button>
+            <button class="carousel-btn prev" id="projPrev" aria-label="Previous projects"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><path d="M4 12H20M4 12L8 8M4 12L8 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
             <div class="projects-carousel" id="projectsCarousel"></div>
-            <button class="carousel-btn next" id="projNext" aria-label="Next projects">›</button>
+            <button class="carousel-btn next" id="projNext" aria-label="Next projects"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><path d="M4 12H20M20 12L16 8M20 12L16 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
           </div>
         </div>
       </div>

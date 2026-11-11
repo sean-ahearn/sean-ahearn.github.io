@@ -1191,56 +1191,70 @@
     }
 
     .viewer-nav {
+      --nav-bg: #203456;
+      --nav-color: #eef6ff;
+      --nav-border: #647da2;
+      --nav-hover-bg: #2a456a;
+      --nav-highlight: #7dd3fc;
+      --nav-shadow: rgba(4, 12, 28, 0.30);
+
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
+      z-index: 70;
+      display: grid;
+      place-items: center;
       width: 46px;
       height: 46px;
-      border-radius: 999px;
-
-      border: 1px solid rgba(226, 232, 240, 0.35);
-      background: rgba(15, 23, 42, 0.62);
-      color: rgba(255, 255, 255, 0.96);
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      padding: 0;
+      border: 1px solid var(--nav-border);
+      border-radius: 50%;
+      background: var(--nav-bg);
+      color: var(--nav-color);
+      box-shadow: 0 2px 6px var(--nav-shadow);
       cursor: pointer;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      transition: transform .12s ease, background .2s ease, border-color .2s ease, opacity .2s ease, filter .2s ease;
-      z-index: 70;
-      user-select: none;
-      -webkit-tap-highlight-color: transparent;
-      font-size: 28px;
-      line-height: 1;
-      padding-bottom: 2px;
-
-      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.40);
+      transition: background-color .18s ease, border-color .18s ease, transform .18s ease;
     }
 
     body.light-mode .viewer-nav {
-      background: rgba(255, 255, 255, 0.70);
-      border-color: rgba(15, 23, 42, 0.16);
-      color: rgba(15, 23, 42, 0.92);
+      --nav-bg: #ffffff;
+      --nav-color: #203456;
+      --nav-border: #9cafc6;
+      --nav-hover-bg: #eaf5ff;
+      --nav-highlight: #2563a5;
+      --nav-shadow: rgba(32, 52, 86, 0.16);
+    }
+
+    .viewer-nav svg {
+      display: block;
+      width: 24px;
+      height: 24px;
+      pointer-events: none;
+    }
+
+    .viewer-nav:enabled:hover,
+    .viewer-nav:focus-visible {
+      background: var(--nav-hover-bg);
+      border-color: var(--nav-highlight);
+    }
+
+    .viewer-nav:focus-visible {
+      outline: 2px solid var(--nav-highlight);
+      outline-offset: 2px;
+    }
+
+    .viewer-nav:enabled:active {
+      transform: translateY(-50%) scale(0.94);
+    }
+
+    .viewer-nav:disabled {
+      opacity: 0.42;
       box-shadow: none;
+      cursor: default;
     }
 
-    .viewer-nav:hover {
-      transform: translateY(-50%) scale(1.04);
-      background: rgba(56, 189, 248, 0.26);
-      border-color: rgba(56, 189, 248, 0.60);
-      filter: brightness(1.05);
-    }
-
-    body.light-mode .viewer-nav:hover {
-      background: rgba(229, 240, 255, 0.88);
-      border-color: rgba(59, 130, 246, 0.35);
-      filter: none;
-    }
-
-    .viewer-nav:active {
-      transform: translateY(-50%) scale(0.98);
+    @media (prefers-reduced-motion: reduce) {
+      .viewer-nav { transition: none; }
     }
 
     .viewer-nav.prev {
@@ -1249,12 +1263,6 @@
 
     .viewer-nav.next {
       right: -62px;
-    }
-
-    .viewer-nav[disabled] {
-      opacity: 0.18 !important;
-      pointer-events: auto !important;
-      cursor: default;
     }
 
     .viewer-track {
@@ -2136,8 +2144,8 @@
       <div class="viewer-layout" id="viewerLayout">
         <section class="viewer-media-area" id="viewerShell">
           <div class="viewer-frame" id="viewerFrame">
-            <button class="viewer-nav prev" id="viewerPrev" type="button" aria-label="Previous">‹</button>
-            <button class="viewer-nav next" id="viewerNext" type="button" aria-label="Next">›</button>
+            <button class="viewer-nav prev" id="viewerPrev" type="button" aria-label="Previous"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><path d="M4 12H20M4 12L8 8M4 12L8 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <button class="viewer-nav next" id="viewerNext" type="button" aria-label="Next"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><path d="M4 12H20M20 12L16 8M20 12L16 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
 
             <div class="viewer-viewport" id="viewerViewport">
               <div class="viewer-track" id="viewerTrack"></div>
